@@ -15,10 +15,10 @@ const Home = () => {
 
   useEffect(() => {
     setLoading(true);
-    // Giả lập fetch dữ liệu
+    
     setTimeout(() => {
       setRecipes(ALL_RECIPES);
-      // Trending: top 6 rating
+      
       setTrending([...RECIPES].sort((a, b) => b.rating - a.rating).slice(0, 6));
       setLoading(false);
     }, 800);

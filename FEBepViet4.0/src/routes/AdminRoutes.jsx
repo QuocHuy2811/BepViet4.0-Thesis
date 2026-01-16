@@ -1,4 +1,4 @@
-import { useRoutes } from 'react-router-dom';
+
 import LayoutAdmin from '../Layouts/AdminLayout/LayoutAdmin.jsx';
 import Home from '../pages/admin/Home.jsx';
 import Users from '../pages/admin/Users.jsx';
@@ -13,7 +13,7 @@ import Recipes from '../pages/admin/Recipes.jsx';
 import RecipeDetail from '../pages/admin/RecipeDetail.jsx';
 import EditCategory from '../pages/admin/EditCategory.jsx';
 
-const AdminRoutes = () => useRoutes([
+const adminRoutes = [
     {
         path: '/admin',
         element: <LayoutAdmin />,
@@ -32,6 +32,6 @@ const AdminRoutes = () => useRoutes([
             { path: 'sua-danh-muc/:slug', element: <EditCategory /> },
         ]
     }
-]);
+];
 
-export default AdminRoutes;
+export default adminRoutes;
