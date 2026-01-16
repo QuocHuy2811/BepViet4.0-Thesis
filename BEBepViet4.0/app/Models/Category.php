@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Recipe extends Model
+class Category extends Model
 {
+    public $timestamps = false;
     protected $guarded = [];
 }
