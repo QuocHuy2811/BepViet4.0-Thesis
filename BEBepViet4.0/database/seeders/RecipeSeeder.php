@@ -26,7 +26,8 @@ class RecipeSeeder extends Seeder
                 "description" => $recipe->description,
                 "img_path" => $recipe->img_path,
                 "cook_time" => $recipe->cook_time,
-                "views" => $recipe->views
+                "views" => $recipe->views,
+                "category_id" => $recipe->category_id
             ]);
         });
     }
