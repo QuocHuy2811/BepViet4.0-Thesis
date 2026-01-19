@@ -1,0 +1,62 @@
+[
+    {
+        "user_id":1,
+        "region":"Miền Nam",
+        "difficult":"Dễ",
+        "title":"Trứng ốp la",
+        "slug":"trung-op-la",
+        "description":"Đây là mô tả cho món trứng ốp la",
+        "img_path":"null",
+        "cook_time":5,
+        "views":10,
+        "category_id":1
+    },
+     {
+        "user_id":2,
+        "region":"Miền Bắc",
+        "difficult":"Trung Bình",
+        "title":"Món thứ 2",
+        "slug":"mon-thu-2",
+        "description":"Đây là mô tả cho món thứ 2",
+        "img_path":"null",
+        "cook_time":10,
+        "views":5,
+         "category_id":1
+    },
+     {
+        "user_id":3,
+        "region":"Miền Trung",
+        "difficult":"Khó",
+        "title":"Bún Bò Huế",
+        "slug":"bun-bo-hue",
+        "description":"Đây là mô tả cho món bún bò huế",
+        "img_path":"null",
+        "cook_time":160,
+        "views":100,
+         "category_id":2
+    },
+     {
+        "user_id":4,
+        "region":"Miền Nam",
+        "difficult":"Trung Bình",
+        "title":"Trứng chiên",
+        "slug":"trung-chien",
+        "description":"Đây là mô tả cho món trứng chiên",
+        "img_path":"null",
+        "cook_time":5,
+        "views":10,
+         "category_id":3
+    },
+     {
+        "user_id":5,
+        "region":"Miền Nam",
+        "difficult":"Dễ",
+        "title":"Canh chua",
+        "slug":"canh-chua",
+        "description":"Đây là mô tả cho món canh chua",
+        "img_path":"null",
+        "cook_time":180,
+        "views":50,
+         "category_id":2
+    }
+]

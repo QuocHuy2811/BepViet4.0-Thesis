@@ -10,4 +10,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::post('ai/suggest', [AiChefController::class, 'suggestDish']);
+Route::post('/ai/suggest-recipes', [AiChefController::class, 'suggestRecipes']);

@@ -1,0 +1,50 @@
+[
+    {
+  
+        "username":"voquochuy",
+        "email":"voquochuy@gmail.com",
+        "password":"123456",
+        "full_name":"Võ QUốc Huy",
+        "role":"user"
+    },
+    {
+      
+        "username":"nguyenkienduy",
+        "email":"nguyenkienduy@gmail.com",
+        "password":"123456",
+        "full_name":"Nguyễn Kiến Duy",
+         "role":"user"
+    },
+    {
+         
+        "username":"phanlacan",
+        "email":"phanlacan@gmail.com",
+        "password":"123456",
+        "full_name":"Phan Lạc An",
+         "role":"user"
+    },
+     {
+         
+        "username":"levuvinhkhang",
+        "email":"levuvinhkhang@gmail.com",
+        "password":"123456",
+        "full_name":"Lê Vũ Vĩnh Khang",
+         "role":"user"
+    },
+     {
+         
+        "username":"nguyenminhhienlong",
+        "email":"nguyenminhhienlong@gmail.com",
+        "password":"123456",
+        "full_name":"Nguyễn Minh Hiển Long",
+         "role":"user"
+    },
+    {
+       
+        "username":"admin",
+        "email":"admin@gmail.com",
+        "password":"123456",
+        "full_name":"Nguyễn Văn A",
+        "role":"admin"
+    }
+]
