@@ -9,7 +9,6 @@ export const Navigation = () => {
 export const DesktopSidebar = ({token,setUser}) => {
   const [showGearMenu, setShowGearMenu] = useState(false);
   const [info,setInfo]=useState({});
-  const [loading,setLoading]=useState(true);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -45,21 +44,12 @@ export const DesktopSidebar = ({token,setUser}) => {
     .then((res)=>res.json())
     .then((result)=>{
         setInfo(result);
-        setLoading(false);
+       
     })
-    }else{
-      setLoading(false);
     }
     
   },[token])
-  if(loading)
-  {
-    return (
-      <div className='text text-center'>
-        Đang tải
-      </div>
-    );
-  }
+ 
   return (
     <div className="hidden md:flex flex-col w-64 h-screen bg-white border-r border-gray-100 shadow-xl fixed left-0 top-0 overflow-y-auto z-50">
      
