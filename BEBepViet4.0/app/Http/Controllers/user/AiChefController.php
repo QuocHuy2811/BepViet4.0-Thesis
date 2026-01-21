@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\user;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
-
+use App\Http\Controllers\Controller;
 class AiChefController extends Controller
 {
     public function suggestRecipes(Request $request)
@@ -77,6 +77,7 @@ class AiChefController extends Controller
         ";
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withoutVerifying()
             ->timeout(60)
                 ->withHeaders([
