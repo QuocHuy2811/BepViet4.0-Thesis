@@ -1,4 +1,4 @@
-import { useRoutes } from 'react-router-dom';
+
 import AccountPage from '../pages/user/AccountPage.jsx';
 import Blog from '../pages/user/Blog.jsx';
 import Explore from '../pages/user/Explore.jsx';
@@ -12,6 +12,7 @@ import UserLogin from '../pages/user/UserLogin.jsx';
 import UserSignup from '../pages/user/UserSignup.jsx';
 import ForgetPassword from '../pages/user/ForgetPassword.jsx';
 import ResetPassword from '../pages/user/ResetPassword.jsx';
+import { useRoutes } from 'react-router-dom';
 
 const UserRoutes = ({token,setUser}) => useRoutes([
   {

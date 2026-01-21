@@ -1,4 +1,4 @@
-import { useRoutes } from 'react-router-dom';
+
 import LayoutAdmin from '../Layouts/AdminLayout/LayoutAdmin.jsx';
 import Home from '../pages/admin/Home.jsx';
 import Users from '../pages/admin/Users.jsx';
@@ -12,6 +12,7 @@ import Comments from '../pages/admin/Comments.jsx';
 import Recipes from '../pages/admin/Recipes.jsx';
 import RecipeDetail from '../pages/admin/RecipeDetail.jsx';
 import EditCategory from '../pages/admin/EditCategory.jsx';
+import { useRoutes } from 'react-router-dom';
 
 const AdminRoutes = () => useRoutes([
     {
