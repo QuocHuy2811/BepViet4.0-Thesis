@@ -12,8 +12,9 @@ import Comments from '../pages/admin/Comments.jsx';
 import Recipes from '../pages/admin/Recipes.jsx';
 import RecipeDetail from '../pages/admin/RecipeDetail.jsx';
 import EditCategory from '../pages/admin/EditCategory.jsx';
+import { useRoutes } from 'react-router-dom';
 
-const adminRoutes = [
+const AdminRoutes = () => useRoutes([
     {
         path: '/admin',
         element: <LayoutAdmin />,
@@ -29,9 +30,9 @@ const adminRoutes = [
             { path: 'quan-ly-binh-luan', element: <Comments /> },
             { path: 'quan-ly-cong-thuc', element: <Recipes /> },
             { path: 'xem-chi-tiet-cong-thuc/:id', element: <RecipeDetail /> },
-            { path: 'sua-danh-muc/:id', element: <EditCategory /> },
+            { path: 'sua-danh-muc/:slug', element: <EditCategory /> },
         ]
     }
-];
+]);
 
-export default adminRoutes;
+export default AdminRoutes;
