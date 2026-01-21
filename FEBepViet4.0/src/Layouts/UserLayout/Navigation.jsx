@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export const Navigation = () => {
@@ -6,19 +6,50 @@ export const Navigation = () => {
   return null;
 };
 
-export const DesktopSidebar = () => {
+export const DesktopSidebar = ({token,setUser}) => {
   const [showGearMenu, setShowGearMenu] = useState(false);
+  const [info,setInfo]=useState({});
   const navigate = useNavigate();
-  // Giả lập user đăng nhập (không dùng ở đây)
 
   const handleLogout = () => {
-    setShowGearMenu(false);
-    alert('Đã đăng xuất!');
+    fetch("http://localhost:8000/api/dang-xuat",{
+        method:"POST",
+        headers:
+        {
+          "Authorization":`Bearer ${token}`
+        }
+      }).then((res)=>res.json())
+      .then((data)=>{
+        console.log(data);
+        localStorage.removeItem("token");
+        setUser(null);
+         alert('Đã đăng xuất!');
+         navigate("/")
+      })
+    
+   
   };
   const handleManageAccount = () => {
     setShowGearMenu(false);
     navigate('/account');
   };
+  useEffect(()=>{
+    if(token)
+    {
+        fetch("http://localhost:8000/api/user",{
+      headers:{
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then((res)=>res.json())
+    .then((result)=>{
+        setInfo(result);
+       
+    })
+    }
+    
+  },[token])
+ 
   return (
     <div className="hidden md:flex flex-col w-64 h-screen bg-white border-r border-gray-100 shadow-xl fixed left-0 top-0 overflow-y-auto z-50">
      
@@ -42,10 +73,6 @@ export const DesktopSidebar = () => {
             <span>Trang chủ</span>
           </Link>
 
-
-          
-
-
           <Link to={"/explore"} className="no-underline group flex items-center gap-3 w-full p-3.5 rounded-2xl text-gray-600 font-medium hover:bg-orange-50 hover:text-orange-600 transition-all duration-200 ease-in-out">
             <span className="text-xl">🌍</span>
             <span>Khám phá</span>
@@ -57,12 +84,14 @@ export const DesktopSidebar = () => {
             <span>Blog & Review</span>
           </Link>
 
-
-          <Link to={"/smart-chef"} className="no-underline group flex items-center gap-3 w-full p-3.5 rounded-2xl text-gray-600 font-medium hover:bg-orange-100 hover:text-orange-700 transition-all duration-200 ease-in-out">
+          {
+            token &&  <Link to={"/smart-chef"} className="no-underline group flex items-center gap-3 w-full p-3.5 rounded-2xl text-gray-600 font-medium hover:bg-orange-100 hover:text-orange-700 transition-all duration-200 ease-in-out">
             <span className="text-xl">🤖</span>
             <span className="flex-1">AI Chef</span>
             <span className="bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full font-bold group-hover:bg-orange-200">NEW</span>
           </Link>
+          }
+         
 
 
           <Link to={"/post"} className="no-underline group flex items-center gap-3 w-full p-3.5 rounded-2xl text-gray-600 font-medium hover:bg-orange-50 hover:text-orange-600 transition-all duration-200 ease-in-out">
@@ -72,18 +101,18 @@ export const DesktopSidebar = () => {
         </nav>
       </div>
 
-      
-      <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex flex-col gap-2">
+      {
+        token ?<div className="p-4 border-t border-gray-100 bg-gray-50/50 flex flex-col gap-2">
         <Link to="/profile" className="no-underline">
           <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer group border border-transparent hover:border-gray-100">
             <img 
-              src="https://picsum.photos/100/100" 
+              src= {info?.user?.img_avatar} 
               alt="Me" 
               className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm group-hover:ring-orange-200 transition-all" 
             />
             <div className="flex flex-col">
               <span className="text-sm font-bold text-gray-700 group-hover:text-orange-600 transition-colors">Người dùng</span>
-              <span className="text-xs text-gray-500 font-medium">Đầu bếp tại gia</span>
+              <span className="text-xs text-gray-500 font-medium">{info?.user?.full_name}</span>
             </div>
           </div>
         </Link>
@@ -115,6 +144,12 @@ export const DesktopSidebar = () => {
         )}
 
       </div>
+      : 
+      <nav className='p-4 border-t border-gray-100 bg-gray-50/50 flex flex-col gap-2'>
+        <Link to="/signup" className='btn btn-danger'>Đăng ký</Link>
+        <Link to="/login" className='btn btn-primary'>Đăng nhập</Link>
+      </nav>
+      }
     </div>
   );
 }

@@ -1,37 +1,88 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import RecipeCard from './RecipeCard.jsx';
-import { RECIPES, ALL_RECIPES } from '../../data/mockData.js';
-
-const ITEMS_PER_PAGE = 6;
 
 const Home = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
-  const [trending, setTrending] = useState([]);
+  const [view, setView] = useState([]);
+  const [paginate,setPaginate]=useState([]);
   const trendingScrollRef = useRef(null);
+  const vi_tri=useRef("tat_ca");
+
+const fetchRecipe=(url)=>{
+  fetch(`${url}`)
+  .then((res)=>res.json())
+  .then((data)=>{
+    setRecipes(data.danh_sach.data);
+     setPaginate(data.danh_sach.links);
+  })
+}
+
+
+const fetchRecipeFollow=(url)=>{
+   const token =localStorage.getItem("token");
+  fetch(`${url}`,{
+      headers:{
+        "Authorization":`Bearer ${token}`
+    }
+  })
+  .then((res)=>res.json())
+  .then((data)=>{
+    setRecipes(data.danh_sach.data);
+     setPaginate(data.danh_sach.links);
+  })
+}
+
+const fetchFollowed=()=>{
+  vi_tri.current="follow"
+  const token =localStorage.getItem("token");
+  if(!token)
+  {
+      alert("Vui lòng đăng nhập để thực hiện chức năng");
+  }else{
+      fetch("http://localhost:8000/api/bai-viet-followed",
+    {
+      headers:{
+        "Authorization":`Bearer ${token}`
+      }
+    }
+  )
+  .then((res)=>res.json())
+  .then((data)=>{
+    console.log(data);
+    setRecipes(data.danh_sach.data);
+    setPaginate(data.danh_sach.links)
+  })
+}
+  }
+  
+const fetchAll=()=>{
+   vi_tri.current="tat_ca";
+  fetch("http://localhost:8000/api/")
+  .then((res)=>res.json())
+  .then((data)=>{
+   setRecipes(data.danh_sach.data);
+   setPaginate(data.danh_sach.links);
+  })
+}
 
   useEffect(() => {
-    setLoading(true);
-    // Giả lập fetch dữ liệu
-    setTimeout(() => {
-      setRecipes(ALL_RECIPES);
-      // Trending: top 6 rating
-      setTrending([...RECIPES].sort((a, b) => b.rating - a.rating).slice(0, 6));
-      setLoading(false);
-    }, 800);
+    fetch("http://127.0.0.1:8000/api")
+      .then((res) => res.json())
+      .then((data) => {
+        setView(data.luot_xem_nhieu_nhat);
+        setRecipes(data.danh_sach.data);
+        setPaginate(data.danh_sach.links);
+        setLoading(false);
+      })
   }, []);
 
-  // Pagination Logic
-  const totalPages = Math.ceil(recipes.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedRecipes = recipes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+
+
 
   const handleRecipeClick = (recipe) => {
     navigate(`/recipe/${recipe.id}`);
@@ -48,10 +99,13 @@ const Home = () => {
     }
   };
 
-  // Skeleton loading
-  const SkeletonCard = () => (
-    <div className="w-72 bg-gray-100 rounded-xl animate-pulse h-64 border" />
-  );
+  if (loading) {
+    return (
+      <div className='text-center'>
+        Đang Tải
+      </div>
+    );
+  }
 
   return (
     <div className="pb-24 md:pb-0">
@@ -66,7 +120,7 @@ const Home = () => {
         <section className="mb-10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-              <span className="text-red-500">🔥</span> Xu Hướng Tuần Này
+              <span className="text-red-500">🔥</span> Lượt Xem Nhiều Nhất
             </h2>
           </div>
           <div className="relative group">
@@ -84,17 +138,15 @@ const Home = () => {
               className="overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
             >
               <div className="flex gap-4 w-max">
-                {loading
-                  ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-                  : trending.length > 0
-                    ? trending.map((recipe) => (
+                {
+                       view.map((recipe) => (
                         <div 
                           key={recipe.id} 
                           onClick={() => handleRecipeClick(recipe)}
                           className="w-72 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer hover:shadow-md transition-all group/card"
                         >
                           <div className="h-40 overflow-hidden relative">
-                            <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500" />
+                            <img src={recipe.image_path} alt={recipe.title} className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500" />
                             <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">
                               HOT
                             </div>
@@ -103,16 +155,14 @@ const Home = () => {
                             <h3 className="font-bold text-gray-800 truncate mb-1 text-base">{recipe.title}</h3>
                             <div className="flex items-center gap-2 text-xs text-gray-500">
                               <span className="flex items-center gap-1">
-                                <svg className="w-3 h-3 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                {recipe.rating}
+                                {recipe.region}
                               </span>
                               <span>•</span>
-                              <span>{recipe.author.fullName}</span>
+                              <span>{recipe.user.full_name}</span>
                             </div>
                           </div>
                         </div>
                       ))
-                    : <div className="text-gray-400 italic p-8">Không có công thức nổi bật tuần này.</div>
                 }
               </div>
             </div>
@@ -134,58 +184,58 @@ const Home = () => {
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
               <span>✨</span> Dành Cho Bạn
             </h2>
-            <div className="text-sm text-gray-500">
-              Trang {currentPage} / {totalPages}
-            </div>
+                  
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {loading
-              ? Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => <SkeletonCard key={i} />)
-              : paginatedRecipes.length > 0
-                ? paginatedRecipes.map(recipe => (
-                    <RecipeCard 
+          <div className='mb-4'>
+            <button className='btn btn-success mr-4' onClick={fetchAll}>Tất cả</button>
+            <button className='btn btn-danger' onClick={fetchFollowed}>Đang theo dõi</button>
+          </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {
+              recipes.length>0?
+                  recipes.map((recipe)=>(
+                      <RecipeCard 
                       key={recipe.id} 
                       recipe={recipe} 
                       onClick={() => handleRecipeClick(recipe)}
                     />
-                  ))
-                : <div className="col-span-3 text-gray-400 italic p-8">Không có công thức nào phù hợp.</div>
+                  )):
+                  <div className="col-span-3 text-gray-400 italic p-8">Không có công thức nào.</div>
+                   
+            }
+           
+          </div>
+         <div className="flex flex-wrap justify-center items-center gap-2 mt-10">
+            {
+             vi_tri==="tat_ca"?
+            paginate.map((pagi, index) => (
+              <button
+                key={index}
+                onClick={(e)=>{fetchRecipe(pagi.url)}}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
+                  ${pagi.active 
+                    ? 'bg-orange-500 text-white shadow-md' 
+                    : 'bg-white text-gray-600 hover:bg-orange-50 border border-gray-200'}
+                `}
+                dangerouslySetInnerHTML={{ __html: pagi.label }}
+              />
+            )): 
+             paginate.map((pagi, index) => (
+              <button
+                key={index}
+                onClick={(e)=>{fetchRecipeFollow(pagi.url)}}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
+                  ${pagi.active 
+                    ? 'bg-orange-500 text-white shadow-md' 
+                    : 'bg-white text-gray-600 hover:bg-orange-50 border border-gray-200'}
+                `}
+                dangerouslySetInnerHTML={{ __html: pagi.label }}
+              />
+            ))
+            
             }
           </div>
-          {/* Pagination Controls */}
-          {!loading && totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2">
-              <button 
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Trước
-              </button>
-              <div className="flex gap-2">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`w-10 h-10 rounded-lg font-bold text-sm transition-all ${
-                      currentPage === page 
-                        ? 'bg-orange-600 text-white shadow-md shadow-orange-200' 
-                        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
-              </div>
-              <button 
-                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Sau
-              </button>
-            </div>
-          )}
+
         </section>
       </div>
     </div>
