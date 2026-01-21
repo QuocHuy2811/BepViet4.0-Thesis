@@ -12,18 +12,13 @@ export const DesktopSidebar = ({ token, setUser }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    fetch("http://localhost:8000/api/dang-xuat", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/json", // [QUAN TRỌNG] Bắt buộc phải có để Laravel trả về JSON lỗi thay vì HTML
-        "Content-Type": "application/json"
-      }
-    })
-      .then((res) => {
-        // Kiểm tra nếu token hết hạn hoặc lỗi thì vẫn xóa localstorage
-        if (!res.ok) {
-          throw new Error("Lỗi request");
+    fetch("http://localhost:8000/api/dang-xuat",{
+        method:"POST",
+        headers:
+        {
+          "Authorization":`Bearer ${token}`,
+          "Accept": "application/json",
+          "Content-Type": "application/json"
         }
         return res.json();
       })
