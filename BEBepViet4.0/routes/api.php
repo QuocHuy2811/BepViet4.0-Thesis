@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\admin\AdminUserController; //Huy 21/01/2026
 use App\Http\Controllers\user\HomeController;
 use App\Http\Controllers\user\UserController;
 use Illuminate\Http\Request;
@@ -45,8 +45,15 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    // Di chuyển route đăng bài vào trong nhóm này
     Route::post('/recipes', [RecipeController::class, 'store']);
+    // --- KHU VỰC ADMIN ---
+    Route::prefix('admin')->group(function() {
+        // Lấy danh sách user: GET /api/admin/users
+        Route::get('/users', [AdminUserController::class, 'index']);
+        
+        // Cập nhật trạng thái: PUT /api/admin/users/{id}/status
+        Route::put('/users/{id}/status', [AdminUserController::class, 'updateStatus']);
+    });
 });
 
 use App\Http\Controllers\user\AiChefController;
