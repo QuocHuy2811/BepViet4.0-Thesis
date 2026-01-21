@@ -21,5 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 Route::get("/", [HomeController::class, "index"]);
+    //Mguyen Kien Duy 21/01/2026 11:00
+Route::post("/forget-password", [UserController::class, "forgetPassword"]);
+Route::post("/reset-password", [UserController::class, "resetPassword"]);
+    //Mguyen Kien Duy 21/01/2026 11:00
 //Nguyen Kien Duy 18/01/2026 8:00
 //Nguyen Kien Duy 19/01/2026 12:46 (Cap nhat)
