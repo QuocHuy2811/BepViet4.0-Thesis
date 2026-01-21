@@ -1,4 +1,4 @@
-import { useRoutes } from 'react-router-dom';
+
 import AccountPage from '../pages/user/AccountPage.jsx';
 import Blog from '../pages/user/Blog.jsx';
 import Explore from '../pages/user/Explore.jsx';
@@ -10,6 +10,9 @@ import SmartChef from '../pages/user/SmartChef.jsx';
 import Layout from '../Layouts/UserLayout/Layout.jsx';
 import UserLogin from '../pages/user/UserLogin.jsx';
 import UserSignup from '../pages/user/UserSignup.jsx';
+import ForgetPassword from '../pages/user/ForgetPassword.jsx';
+import ResetPassword from '../pages/user/ResetPassword.jsx';
+import { useRoutes } from 'react-router-dom';
 
 const UserRoutes = ({token,setUser}) => useRoutes([
   {
@@ -25,7 +28,11 @@ const UserRoutes = ({token,setUser}) => useRoutes([
       { path: 'recipe/:id', element: <RecipeDetail /> },
       { path: 'account', element: <AccountPage token={token}/> },
        { path: 'login', element: <UserLogin token={token} setUser={setUser}/> },
-          { path: 'signup', element: <UserSignup/> },
+      { path: 'account', element: <AccountPage /> },
+      { path: 'login', element: <UserLogin token={token} setUser={setUser}/> },
+      { path: 'signup', element: <UserSignup/> },
+      { path: 'forget-password', element: <ForgetPassword/> },
+      { path: 'reset-password/:token', element: <ResetPassword/> },
     ]
   }
 ]);

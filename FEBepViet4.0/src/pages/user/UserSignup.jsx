@@ -93,7 +93,12 @@ function UserSignup()
    <div className="mb-3">
     <label  className="form-label">Nhập lại mật khẩu</label>
     <input type="password" className="form-control" onChange={(e)=>setRePassword(e.target.value)} />
-  
+     {
+        errors.password_confirmation &&  
+     <span className=" text text-danger">
+        {errors.password_confirmation[0]}
+    </span>
+    }
   </div>
    <div className="mb-3">
     <label  className="form-label">Ảnh đại diện</label>
