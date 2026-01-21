@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string("title");
             $table->string("slug")->unique();
             $table->text("content");
-            $table->string("thumbnail");
+            $table->string("thumbnail")->nullable();
             $table->enum("status",["draft","published"]);
         });
     }

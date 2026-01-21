@@ -16,7 +16,9 @@ export const DesktopSidebar = ({token,setUser}) => {
         method:"POST",
         headers:
         {
-          "Authorization":`Bearer ${token}`
+          "Authorization":`Bearer ${token}`,
+          "Content-Type":"application/json",
+          "Accept":"application/json"
         }
       }).then((res)=>res.json())
       .then((data)=>{
