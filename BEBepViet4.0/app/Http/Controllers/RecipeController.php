@@ -32,13 +32,13 @@ class RecipeController extends Controller
 
         DB::beginTransaction();
         try {
-            // Xử lý ảnh đại diện món ăn
-            $mainImagePath = '';
+
+            $mainImagePath = "null"; 
             if ($request->hasFile('image')) {
                 $mainImagePath = $request->file('image')->store('recipes', 'public');
             }
 
-            // Tạo Slug & Recipe (Giữ nguyên logic cũ)
+
             $originalSlug = Str::slug($request->title);
             $slug = $originalSlug;
             $count = 1;
@@ -60,7 +60,7 @@ class RecipeController extends Controller
                 'views' => 0
             ]);
 
-            // Lưu Ingredients (Giữ nguyên)
+
             if ($request->has('ingredients')) {
                 foreach ($request->ingredients as $ing) {
                     if (!empty($ing['name'])) {
@@ -82,7 +82,9 @@ class RecipeController extends Controller
                 foreach ($request->steps as $index => $step) {
                     if (!empty($step['content'])) {
 
-                        $stepImagePath = '';
+                        // Gán mặc định là "null" nếu không có ảnh
+                        $stepImagePath = "null";
+                        
                         // Kiểm tra xem bước thứ $index có gửi file ảnh lên không
                         if ($request->hasFile("steps.$index.image")) {
                             $stepImagePath = $request->file("steps.$index.image")->store('steps', 'public');

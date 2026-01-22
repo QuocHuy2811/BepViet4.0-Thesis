@@ -29,7 +29,14 @@ Route::middleware(['auth:sanctum', checkStatusUser::class])->group(function () {
 
     //api gợi ý món ăn bằng AI
     Route::post('/ai/suggest-recipes', [AiChefController::class, 'suggestRecipes']);
-
+    // api load danh sách categories
+    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('category.index');
+    // api add category
+    Route::post('admin/categories/add', [CategoryController::class, 'store'])->name('category.store');
+    // api update category
+    Route::get('admin/categories/{id}', [CategoryController::class, 'show'])->name('category.show');
+    Route::put('admin/categories/{id}', [CategoryController::class, 'update'])->name('category.update');
+    Route::get("/", [HomeController::class, "index"]);
 
     Route::get("/user", function (Request $request) {
         return response()->json([
@@ -49,14 +56,7 @@ Route::middleware(['auth:sanctum', checkStatusUser::class])->group(function () {
     Route::post("/add-recipe-to-cookbook", [CookbookController::class, "themMonAnVaoCookbook"]);
     Route::post("/follow", [UserController::class, "follow"]);
 });
-// api load danh sách categories
-Route::get('/admin/categories', [CategoryController::class, 'index'])->name('category.index');
-// api add category
-Route::post('admin/categories/add', [CategoryController::class, 'store'])->name('category.store');
-// api update category
-Route::get('admin/categories/{id}', [CategoryController::class, 'show'])->name('category.show');
-Route::put('admin/categories/{id}', [CategoryController::class, 'update'])->name('category.update');
-Route::get("/", [HomeController::class, "index"]);
+
 //Mguyen Kien Duy 21/01/2026 11:00
 Route::post("/forget-password", [UserController::class, "forgetPassword"]);
 Route::post("/reset-password", [UserController::class, "resetPassword"]);
