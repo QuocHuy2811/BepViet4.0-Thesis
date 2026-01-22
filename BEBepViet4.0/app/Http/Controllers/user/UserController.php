@@ -8,6 +8,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SignupRequest;
 use App\Mail\ForgetPasswordMail;
+use App\Models\Follow;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,13 +53,15 @@ class UserController extends Controller
             return response()->json([
                 "status" => true,
                 "message" => "Đăng nhập thành công",
-                "token" => $user->createToken("API TOKEN")->plainTextToken,
-                "token_type" => "Bearer"
+                "token" => Auth::user()->createToken("API TOKEN")->plainTextToken,
+                "token_type" => "Bearer",
+                "user" => $request->user()
             ], 200);
         } else {
             return response()->json([
                 "status" => false,
-                "message" => "Đăng nhập thất bại"
+                "message" => "Đăng nhập thất bại",
+
             ], 401);
         }
     }
@@ -152,6 +155,26 @@ class UserController extends Controller
         return response()->json([
             "status" => true,
             "message" => "Cập nhật mật khẩu thành công"
+        ], 200);
+    }
+
+    //Nguyen Kien Duy 21/01/2026
+    public function follow(Request $request)
+    {
+        $exists = Follow::where("follower_id", $request->user()->id)->where("followed_id", $request->user_id)->exists();
+        if ($exists) {
+            return response()->json([
+                "status" => false,
+                "message" => "Bạn đã theo dõi người này"
+            ], 400);
+        }
+        Follow::insert([
+            "follower_id" => $request->user()->id,
+            "followed_id" => $request->user_id
+        ]);
+        return response()->json([
+            "status" => true,
+            "message" => "Theo dõi người dùng này thành công"
         ], 200);
     }
 }

@@ -1,8 +1,33 @@
 import "../../assets/css/style.css";
 import avatar from "../../assets/avatar.png";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+
+
 export default  function LayoutAdmin()
 {
+
+
+    const navigate=useNavigate();
+const handleLogout=()=>{
+    const token=localStorage.getItem("token");
+    fetch("http://localhost:8000/api/admin/dang-xuat",
+        {
+            method:"POST",
+            headers:{
+                "Authorization":`Bearer ${token}`
+            }
+        }
+    )
+    .then((res)=>res.json())
+    .then((result)=>{
+        localStorage.removeItem("token");
+        alert(result.message);
+        navigate("/admin/dang-nhap")
+    })
+}
+
+
+
     return (
         <div className="container-fluid">
                  <div className="row">
@@ -55,7 +80,7 @@ export default  function LayoutAdmin()
                             </nav>
                         </li>
                     </ul>
-                    <button className="btn btn-danger w-119 position">Đăng xuất</button>
+                    <button className="btn btn-danger w-119 position" onClick={handleLogout}>Đăng xuất</button>
                 </div>
             </div>
             <div className="col-9">

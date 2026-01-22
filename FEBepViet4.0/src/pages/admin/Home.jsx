@@ -1,21 +1,52 @@
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function Home()
 {
-    const data = [
-  { month: 'T1', revenue: 4000 },
-  { month: 'T2', revenue: 3000 },
-  { month: 'T3', revenue: 2000 },
-  { month: 'T4', revenue: 2780 },
-  { month: 'T5', revenue: 1890 },
-  { month: 'T6', revenue: 2390 },
-  { month: 'T7', revenue: 3490 },
-  { month: 'T8', revenue: 4000 },
-  { month: 'T9', revenue: 3000 },
-  { month: 'T10', revenue: 2000 },
-  { month: 'T11', revenue: 2780 },
-  { month: 'T12', revenue: 3890 },
+    const [loading,setLoading]=useState(true)
+    const [data,setData]=useState({});
+    const monthNames = [
+  "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4",
+  "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8",
+  "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
 ];
+    const [chartRecipe,setChartRecipe]=useState(null);
+    const [chartUser,setChartUser]=useState(null);
+    useEffect(()=>{
+        const token=localStorage.getItem("token");
+        fetch("http://localhost:8000/api/admin",{
+            headers:{
+                "Authorization":`Bearer ${token}`
+            }
+        })
+        .then((res)=>res.json())
+        .then((result)=>{
+            setData(result);
+            const recipes=result.recipes.map((item)=>(
+                {
+                    month:monthNames[item.month-1],
+                    revenue:item.revenue
+                }
+            ))
+            const users=result.users.map((item)=>(
+                {
+                    month:monthNames[item.month-1],
+                    revenue:item.revenue
+                }
+            ))
+            setChartRecipe(recipes);
+            setChartUser(users);
+            setLoading(false)
+        })
+    },[])
+    if(loading)
+    {
+        return (
+            <div className='text text-center'>
+                Đang tải
+            </div>
+        );
+    }
     return (
         <>
             <h1 className="mt-2">Trang chủ</h1>
@@ -23,7 +54,7 @@ function Home()
                 <div className="col-4">
                     <div className="card shadow">
                             <div className="card-body">
-                                    <p className="text-center">10 Người Dùng</p>
+                                    <p className="text-center">{data.nguoi_dung} Người Dùng</p>
                                     
                             </div>
                     </div>
@@ -32,7 +63,7 @@ function Home()
                  <div className="col-4">
                     <div className="card shadow">
                             <div className="card-body">
-                                    <p className="text-center">20 Công thức nấu ăn</p>
+                                    <p className="text-center">{data.cong_thuc} Công thức nấu ăn</p>
                                     
                             </div>
                     </div>
@@ -41,7 +72,7 @@ function Home()
                  <div className="col-4">
                     <div className="card shadow">
                             <div className="card-body">
-                                    <p className="text-center">10 Bài Đăng</p>
+                                    <p className="text-center">{data.bai_viet} Bài Đăng</p>
                                     
                             </div>
                     </div>
@@ -51,7 +82,7 @@ function Home()
             <div style={{ width: '100%', height: 400 }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          data={data}
+          data={chartRecipe}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
           {/* Lưới ngang cho biểu đồ */}
@@ -70,14 +101,14 @@ function Home()
           <Legend />
           
           {/* Cột biểu đồ: bạn có thể đổi màu tại stroke và fill */}
-          <Bar dataKey="revenue" name="Biểu đồ số lượng công thức nấu ăn trong năm 2025" fill="#0d6efd" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="revenue" name="Biểu đồ số lượng công thức nấu ăn trong năm 2026" fill="#0d6efd" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
              </div>
             <div style={{ width: '100%', height: 400 }}>
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                data={data}
+                data={chartUser}
                 margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
                 {/* Lưới ngang cho biểu đồ */}
@@ -96,7 +127,7 @@ function Home()
                 <Legend />
                 
                 {/* Cột biểu đồ: bạn có thể đổi màu tại stroke và fill */}
-                <Bar dataKey="revenue" name="Biểu đồ số lượng bài đăng trong năm 2025" fill="#0d6efd" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="revenue" name="Biểu đồ số lượng người dùng trong năm 2026" fill="#0d6efd" radius={[4, 4, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
             </div>

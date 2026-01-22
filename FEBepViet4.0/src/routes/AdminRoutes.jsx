@@ -12,12 +12,19 @@ import Comments from '../pages/admin/Comments.jsx';
 import Recipes from '../pages/admin/Recipes.jsx';
 import RecipeDetail from '../pages/admin/RecipeDetail.jsx';
 import EditCategory from '../pages/admin/EditCategory.jsx';
+import AdminLogin from '../pages/admin/AdminLogin.jsx';
+import ProtectRoute from '../pages/admin/ProtectRoute.jsx';
 import { useRoutes } from 'react-router-dom';
 
 const AdminRoutes = () => useRoutes([
     {
         path: '/admin',
-        element: <LayoutAdmin />,
+        element: (
+            <ProtectRoute>
+                <LayoutAdmin />
+            </ProtectRoute>
+        )   
+        ,
         children: [
             { index: true, element: <Home /> },
             { path: 'quan-ly-nguoi-dung', element: <Users /> },
@@ -31,8 +38,10 @@ const AdminRoutes = () => useRoutes([
             { path: 'quan-ly-cong-thuc', element: <Recipes /> },
             { path: 'xem-chi-tiet-cong-thuc/:id', element: <RecipeDetail /> },
             { path: 'sua-danh-muc/:slug', element: <EditCategory /> },
+           
         ]
-    }
+    },
+      { path: '/admin/dang-nhap', element: <AdminLogin /> },
 ]);
 
 export default AdminRoutes;

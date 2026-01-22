@@ -85,7 +85,7 @@ const fetchAll=()=>{
 
 
   const handleRecipeClick = (recipe) => {
-    navigate(`/recipe/${recipe.id}`);
+    navigate(`/recipe/${recipe.slug}`);
   };
 
   const scrollTrending = (direction) => {
@@ -146,7 +146,7 @@ const fetchAll=()=>{
                           className="w-72 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer hover:shadow-md transition-all group/card"
                         >
                           <div className="h-40 overflow-hidden relative">
-                            <img src={recipe.image_path} alt={recipe.title} className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500" />
+                            <img src={recipe.img_path} alt={recipe.title} className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500" />
                             <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">
                               HOT
                             </div>

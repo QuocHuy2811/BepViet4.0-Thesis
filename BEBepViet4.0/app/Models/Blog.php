@@ -8,4 +8,5 @@ class Blog extends Model
 {
     public $timestamps = false;
     protected $guarded = [];
+    //
 }

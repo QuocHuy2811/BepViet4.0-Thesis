@@ -44,29 +44,18 @@ export const DesktopSidebar = ({ token, setUser }) => {
     setShowGearMenu(false);
     navigate('/account');
   };
-  useEffect(() => {
-    if (token) {
-      fetch("http://localhost:8000/api/user", {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Accept": "application/json" // [QUAN TRỌNG]
-        }
-      })
-        .then((res) => {
-          if (!res.ok) {
-            // Nếu token sai (401), xóa nó đi để tránh lỗi lặp lại
-            if (res.status === 401) {
-              localStorage.removeItem("token");
-              setUser(null);
-            }
-            throw new Error("Token không hợp lệ");
-          }
-          return res.json();
-        })
-        .then((result) => {
-          setInfo(result);
-        })
-        .catch(err => console.log(err));
+  useEffect(()=>{
+    if(token)
+    {
+        fetch("http://localhost:8000/api/nguoi-dung",{
+      headers:{
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then((res)=>res.json())
+    .then((result)=>{
+        setInfo(result);
+    })
     }
   }, [token]);
 
@@ -122,18 +111,18 @@ export const DesktopSidebar = ({ token, setUser }) => {
       </div>
 
       {
-        token ? <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex flex-col gap-2">
-          <Link to="/profile" className="no-underline">
-            <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer group border border-transparent hover:border-gray-100">
-              <img
-                src={info?.img_avatar}
-                alt="Me"
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm group-hover:ring-orange-200 transition-all"
-              />
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-gray-700 group-hover:text-orange-600 transition-colors">Người dùng</span>
-                <span className="text-xs text-gray-500 font-medium">{info?.full_name}</span>
-              </div>
+        token ?<div className="p-4 border-t border-gray-100 bg-gray-50/50 flex flex-col gap-2">
+        <Link to="/profile" className="no-underline">
+          <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer group border border-transparent hover:border-gray-100">
+            <img 
+              src= {info?.img_avatar} 
+              alt="Me" 
+              className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm group-hover:ring-orange-200 transition-all" 
+            />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-gray-700 group-hover:text-orange-600 transition-colors">Người dùng</span>
+              <span className="text-xs text-gray-500 font-medium">{info?.full_name}</span>
             </div>
           </Link>
           <button

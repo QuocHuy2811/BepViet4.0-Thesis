@@ -22,4 +22,14 @@ class Step extends Model
     {
         return $this->belongsTo(Recipe::class);
     }
+
+    //Nguyen Kien Duy 21/01/2026
+    public function getStepImageAttribute($value)
+    {
+        if ($value == "null") {
+            return asset("image/no_img.jpg");
+        } else {
+            return asset("storage/" . $value);
+        }
+    }
 }
