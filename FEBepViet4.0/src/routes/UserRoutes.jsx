@@ -24,7 +24,7 @@ const UserRoutes = ({token,setUser}) => useRoutes([
       { path: 'smart-chef', element: <SmartChef /> },
       { path: 'post', element: <PostRecipe /> },
       { path: 'profile', element: <Profile /> },
-      { path: 'recipe/:id', element: <RecipeDetail /> },
+      { path: 'recipe/:slug', element: <RecipeDetail /> },
       { path: 'account', element: <AccountPage /> },
       { path: 'login', element: <UserLogin token={token} setUser={setUser}/> },
       { path: 'signup', element: <UserSignup/> },

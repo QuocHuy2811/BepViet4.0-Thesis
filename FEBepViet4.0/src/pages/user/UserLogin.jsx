@@ -27,11 +27,15 @@ function UserLogin({token,setUser})
             setErrors(result.errors);
         }else if(res.ok)
         {
+            if(result.user.status===0)
+            {
             localStorage.setItem("token",result.token);
             setUser(result.token);
             alert(result.message);
             navigate('/');
-
+            }else{
+                alert("Tài khoản của bạn đã bị khóa, vui lòng liên hệ admin để mở khóa nếu bạn cho rằng đây chỉ là sự nhầm lẫn");
+            }
         }else{
             alert(result.message);
         }

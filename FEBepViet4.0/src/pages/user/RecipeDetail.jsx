@@ -1,52 +1,131 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRecipeById } from '../../data/mockData.js';
+
 
 const RecipeDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
    const [activeTab, setActiveTab] = useState('details');
-   // Mock cookbooks
-   const MOCK_COOKBOOKS = [
-      { id: 1, name: 'Món ngon cuối tuần' },
-      { id: 2, name: 'Healthy & Dinh dưỡng' },
-   ];
+
    const [showCookbookModal, setShowCookbookModal] = useState(false);
    const [selectedCookbookId, setSelectedCookbookId] = useState('');
    const [addSuccess, setAddSuccess] = useState(false);
-  
-  const recipe = getRecipeById(id);
+   const [loading,setLoading]=useState(true);
+   const [recipe,setRecipe]=useState(null);
+   const [cookbook,setCookbook]=useState([]);
+   const [errors,setErrors]=useState({});
+   useEffect(()=>{
+      async function getRecipeDetail()
+      {
+             const res= await fetch(`http://localhost:8000/api/recipe/${slug}`)
+            const result= await res.json();
+            if(res.status===404)
+            {
+                  setRecipe(null); 
+                  setLoading(false);
+            }else if(res.ok){
+               setRecipe(result.recipe);
+               setLoading(false);
+               
+            }
+      }
+      getRecipeDetail()
+ 
+},[slug])
 
-  if (!recipe) {
-      return (
-          <div className="flex flex-col items-center justify-center min-h-screen text-gray-500">
-              <h2 className="text-xl font-bold mb-2">Không tìm thấy công thức</h2>
-              <button onClick={() => navigate('/')} className="text-orange-600 hover:underline">Quay về trang chủ</button>
-          </div>
-      );
+const handleCookbook=()=>{
+   const token=localStorage.getItem("token");
+   if(token)
+   {
+       fetch("http://localhost:8000/api/cookbook",{
+         headers:{
+            "Authorization":`Bearer ${token} `
+         }
+    })
+    .then((res)=>res.json())
+    .then((result)=>{
+      console.log(result);
+      setCookbook(result.cookbook);
+    })
+          setShowCookbookModal(true);
+   
+   }else{
+      alert("Vui lòng đăng nhập để thực hiện chức năng này");
+   }
+   
+}
+
+const handleAdd=async()=>{
+   const token=localStorage.getItem("token");
+   setErrors({});
+  const res=await fetch("http://localhost:8000/api/add-recipe-to-cookbook",{
+   method:"POST",
+   body:JSON.stringify({cookbook_id:selectedCookbookId,recipe_id:recipe.id}),
+      headers:{
+          "Authorization":`Bearer ${token} `,
+          "Content-type":"application/json"
+      }
+   })
+  const result=await res.json();
+  if(res.status===422)
+  {
+         setErrors(result.errors);
+  }else if(res.status===403)
+  {
+      alert(result.message);
+  }else{
+   alert(result.message);
+   setShowCookbookModal(false);
   }
 
-  // Generate Mock Data for display if empty (since Home uses lightweight objects)
-  const displayIngredients = recipe.ingredients.length > 0 ? recipe.ingredients : [
-    { name: 'Thịt bò thăn', amount: '500g', note: 'Thái mỏng' },
-    { name: 'Xương ống', amount: '1kg', note: 'Ninh lấy nước dùng' },
-    { name: 'Hành tây', amount: '2 củ', note: 'Nướng thơm' },
-    { name: 'Gừng', amount: '1 củ', note: 'Nướng thơm' },
-    { name: 'Gia vị phở', amount: '1 gói', note: 'Quế, hồi, thảo quả' }
-  ];
+}
 
-  const displaySteps = recipe.steps.length > 0 ? recipe.steps : [
-    { stepNumber: 1, content: 'Rửa sạch xương ống, chần qua nước sôi để khử mùi hôi. Sau đó cho vào nồi áp suất ninh 30 phút.' },
-    { stepNumber: 2, content: 'Nướng hành tây, hành tím và gừng cho thơm. Rửa sạch, đập dập và cho vào nồi nước dùng.' },
-    { stepNumber: 3, content: 'Thái thịt bò mỏng. Chần bánh phở qua nước sôi.' },
-    { stepNumber: 4, content: 'Xếp bánh phở ra bát, thêm thịt bò, hành lá. Chan nước dùng nóng hổi và thưởng thức.' }
-  ];
+const handleFollow=async()=>{
+ const token=localStorage.getItem("token");
+ const res=await  fetch("http://localhost:8000/api/follow",{
+      method:"POST",
+      body:JSON.stringify({user_id:recipe.user_id}),
+      headers:{
+         "Content-type":"application/json",
+         "Authorization":`Bearer ${token}`
+      }
+   })
+  const result=await res.json();
+
+  if(res.status===400)
+  {
+   alert(result.message);
+  }else if(res.ok){
+   alert(result.message);
+  }
+
+
+}
+
+if(loading)
+{
+   return (
+      <div className='text text-center'>
+            Đang tải
+      </div>
+   );
+}
+ if (!recipe) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-gray-500">
+        <h2 className="text-xl font-bold mb-2">Không tìm thấy công thức</h2>
+        <button onClick={() => navigate('/')} className="text-orange-600 hover:underline">
+          Quay về trang chủ
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white min-h-screen pb-24">
       {/* Header Image */}
       <div className="relative h-[40vh] md:h-[50vh]">
-         <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+         <img src={recipe.img_path} alt={recipe.title} className="w-full h-full object-cover" />
          <button 
           onClick={() => navigate(-1)}
           className="absolute top-4 left-4 bg-white/80 p-2 rounded-full hover:bg-white transition-colors backdrop-blur-sm z-10"
@@ -59,17 +138,17 @@ const RecipeDetail = () => {
             <div className="max-w-4xl mx-auto">
                <div className="flex gap-2 mb-2">
                  <span className="bg-orange-600 text-xs font-bold px-2 py-1 rounded">{recipe.region}</span>
-                 <span className="bg-white/20 text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">{recipe.difficulty}</span>
+                 <span className="bg-white/20 text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">{recipe.difficult}</span>
                </div>
                <h1 className="text-3xl md:text-4xl font-bold mb-2">{recipe.title}</h1>
                <div className="flex items-center gap-4 text-sm text-gray-200">
                  <span className="flex items-center gap-1">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    {recipe.time}
+                    {recipe.cook_time}p
                  </span>
                   <span className="flex items-center gap-1">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                    {recipe.servings} người
+                    {recipe.views} người
                  </span>
                </div>
             </div>
@@ -80,13 +159,12 @@ const RecipeDetail = () => {
          {/* Author Info */}
          <div className="flex items-center justify-between py-4 border-b border-gray-100 mb-6">
             <div className="flex items-center gap-3">
-               <img src={recipe.author.avatar} alt={recipe.author.fullName} className="w-10 h-10 rounded-full object-cover" />
+               <img src={recipe.user.img_avatar} alt={recipe.user.full_name} className="w-10 h-10 rounded-full object-cover" />
                <div>
-                  <h3 className="font-bold text-gray-800">{recipe.author.fullName}</h3>
-                  <p className="text-xs text-gray-500">Đầu bếp tại gia</p>
+                  <h3 className="font-bold text-gray-800">{recipe.user.full_name}</h3>
                </div>
             </div>
-            <button className="bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-orange-200 transition-colors">
+            <button onClick={handleFollow} className="bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-orange-200 transition-colors">
                Theo dõi
             </button>
          </div>
@@ -117,16 +195,18 @@ const RecipeDetail = () => {
                      <span className="text-green-500">🥗</span> Nguyên liệu
                   </h3>
                   <ul className="bg-gray-50 rounded-2xl p-4 space-y-3">
-                     {displayIngredients.map((ing, idx) => (
-                        <li key={idx} className="flex justify-between items-center text-sm border-b border-gray-100 last:border-0 pb-2 last:pb-0">
-                           <span className="font-medium text-gray-700">{ing.name}</span>
-                           <span className="text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200 text-xs">{ing.amount}</span>
+                     {
+                        recipe.ingredients.map((ingredient)=>(
+                            <li key={ingredient.id} className="flex justify-between items-center text-sm border-b border-gray-100 last:border-0 pb-2 last:pb-0">
+                           <span className="font-medium text-gray-700">{ingredient.name}</span>
+                           <span className="text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200 text-xs">{ingredient.amount}</span>
                         </li>
-                     ))}
+                        ))
+                     }
                   </ul>
                            <button
                               className="w-full mt-4 py-2 border border-orange-200 text-orange-600 rounded-xl text-sm font-medium hover:bg-orange-50 transition-colors"
-                              onClick={() => setShowCookbookModal(true)}
+                              onClick={handleCookbook}
                            >
                               + Thêm công thức yêu thích
                            </button>
@@ -142,23 +222,22 @@ const RecipeDetail = () => {
                                        onChange={e => setSelectedCookbookId(e.target.value)}
                                     >
                                        <option value="">Chọn Cookbook...</option>
-                                       {MOCK_COOKBOOKS.map(cb => (
-                                          <option key={cb.id} value={cb.id}>{cb.name}</option>
-                                       ))}
+                                       
+                                          {
+                                             cookbook.map((item)=>(
+                                                    <option key={item.id} value={item.id}>{item.name}</option>
+                                             ))
+                                          }
+                                              
                                     </select>
+                                    {
+                                       errors.cookbook_id &&
+                                       <span className='text text-danger'>{errors.cookbook_id} </span>
+                                    }
                                     <div className="flex gap-2">
                                        <button
                                           className="bg-orange-600 text-white px-4 py-2 rounded"
-                                          onClick={() => {
-                                             if (selectedCookbookId) {
-                                                setAddSuccess(true);
-                                                setTimeout(() => {
-                                                   setShowCookbookModal(false);
-                                                   setAddSuccess(false);
-                                                   setSelectedCookbookId('');
-                                                }, 1200);
-                                             }
-                                          }}
+                                          onClick={handleAdd}
                                        >Thêm</button>
                                        <button className="text-gray-500 px-4 py-2" onClick={() => setShowCookbookModal(false)}>Đóng</button>
                                     </div>
@@ -171,24 +250,27 @@ const RecipeDetail = () => {
                </div>
 
                {/* Steps Column */}
-               <div className="md:col-span-2">
+              <div className="md:col-span-2">
                   <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                      <span className="text-orange-500">🍳</span> Cách làm
                   </h3>
                   <div className="space-y-6">
-                     {displaySteps.map((step, idx) => (
-                        <div key={idx} className="flex gap-4">
+         
+                     {
+                        recipe.steps.map((step)=>(
+                                <div key={step.id} className="flex gap-4">
                            <div className="flex-shrink-0 w-8 h-8 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold text-sm mt-1">
-                              {step.stepNumber}
+                              {step.step_number}
                            </div>
                            <div>
                               <p className="text-gray-700 leading-relaxed">{step.content}</p>
-                              {step.image && (
-                                 <img src={step.image} alt={`Step ${step.stepNumber}`} className="mt-3 rounded-lg w-full md:w-2/3" />
+                              {step.step_image && (
+                                 <img src={step.step_image} alt={`Step ${step.step_number}`} className="mt-3 rounded-lg w-full md:w-2/3" />
                               )}
                            </div>
                         </div>
-                     ))}
+                        ))
+                     }
                   </div>
                </div>
             </div>

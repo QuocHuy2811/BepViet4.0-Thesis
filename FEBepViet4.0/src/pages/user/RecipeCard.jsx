@@ -9,7 +9,7 @@ const RecipeCard = ({ recipe, onClick }) => {
     >
       <div className="relative h-56 w-full overflow-hidden">
         <img 
-          src={recipe.image_path} 
+          src={recipe.img_path} 
           alt={recipe.title} 
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
         />
