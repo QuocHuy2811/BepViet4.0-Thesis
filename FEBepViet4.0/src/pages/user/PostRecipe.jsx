@@ -5,7 +5,7 @@ const PostRecipe = () => {
   const navigate = useNavigate();
 
   // State chứa danh sách danh mục lấy từ API
-  const [categories, setCategories] = useState([]);
+  const [categoriess, setcategoriess] = useState([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -24,12 +24,12 @@ const PostRecipe = () => {
 
   // --- 1. GỌI API LẤY DANH MỤC KHI VÀO TRANG ---
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchcategoriess = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/categories');
+        const res = await fetch('http://127.0.0.1:8000/api/categoriess');
         if (res.ok) {
           const data = await res.json();
-          setCategories(data);
+          setcategoriess(data);
           // Mặc định chọn danh mục đầu tiên nếu có
           if (data.length > 0) {
             setFormData(prev => ({ ...prev, category_id: data[0].id }));
@@ -39,7 +39,7 @@ const PostRecipe = () => {
         console.error("Lỗi lấy danh mục:", error);
       }
     };
-    fetchCategories();
+    fetchcategoriess();
   }, []);
 
   // --- XỬ LÝ INPUT ---
@@ -201,8 +201,8 @@ const PostRecipe = () => {
                 onChange={handleInputChange}
                 className="w-full border border-gray-200 rounded-lg p-3 bg-white outline-none focus:border-orange-500"
               >
-                {categories.length === 0 && <option>Đang tải danh mục...</option>}
-                {categories.map(cat => (
+                {categoriess.length === 0 && <option>Đang tải danh mục...</option>}
+                {categoriess.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
