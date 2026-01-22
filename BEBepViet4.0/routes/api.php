@@ -5,6 +5,7 @@ use App\Http\Controllers\user\HomeController;
 use App\Http\Controllers\user\UserController;
 use App\Http\Controllers\user\AiChefController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\user\UserCategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\user\ExploreController;
@@ -23,13 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //api gợi ý món ăn bằng AI
     Route::post('/ai/suggest-recipes', [AiChefController::class, 'suggestRecipes']);
-    // api load danh sách categories
-    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('category.index');
-    // api add category
-    Route::post('admin/categories/add', [CategoryController::class, 'store'])->name('category.store');
-    // api update category
-    Route::get('admin/categories/{id}', [CategoryController::class, 'show'])->name('category.show');
-    Route::put('admin/categories/{id}', [CategoryController::class, 'update'])->name('category.update');
+    
 
     Route::get("/user", function (Request $request) {
         return response()->json([
@@ -44,6 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("/cookbooks/create", [UserController::class, "taoCookbook"]);
 
 });
+// api load danh sách categories
+    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('category.index');
+    // api add category
+    Route::post('admin/categories/add', [CategoryController::class, 'store'])->name('category.store');
+    // api update category
+    Route::get('admin/categories/{id}', [CategoryController::class, 'show'])->name('category.show');
+    Route::put('admin/categories/{id}', [CategoryController::class, 'update'])->name('category.update');
 Route::get("/", [HomeController::class, "index"]);
 //Mguyen Kien Duy 21/01/2026 11:00
 Route::post("/forget-password", [UserController::class, "forgetPassword"]);
@@ -55,7 +57,7 @@ Route::post("/reset-password", [UserController::class, "resetPassword"]);
 
 //Phan Lac An 20/01/2026
 Route::get('/recipes/search', [ExploreController::class, 'searchFilter']);
-Route::get('/categories', [CategoryController::class, 'listCategories']);
+Route::get('/categories', [UserCategoryController::class, 'listCategories']);
 
 //----------Admin Routes----------//
 //Phan Lac An 20/01/2026
@@ -66,7 +68,7 @@ use App\Models\Category;
 
 
 // Route công khai (Ai cũng xem được danh mục)
-Route::get('/categories', function () {
+Route::get('/categoriess', function () {
     return Category::select('id', 'name')->get();
 });
 

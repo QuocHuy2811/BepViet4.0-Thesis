@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 
-class CategoryController extends Controller
+class UserCategoryController extends Controller
 {
     //Phan Lạc An 20/01/2026
     public function listCategories()
