@@ -71,7 +71,7 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id');
     }
 
-        public function getFullProfile() {
+    public function getFullProfile() {
         return $this->loadCount(['recipes', 'cookbooks', 'blogs', 'followers', 'followings'])
                     ->load(['recipes', 'cookbooks.recipes', 'blogs']);
     }

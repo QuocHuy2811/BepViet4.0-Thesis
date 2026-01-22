@@ -117,6 +117,45 @@ const Profile = ({ token }) => {
     }
   };
 
+  const handleDeleteRecipe = async (id, e) => {
+    e.stopPropagation(); // QUAN TRỌNG: Không cho nhảy vào trang chi tiết
+    if (!window.confirm("Bạn có chắc muốn xóa công thức này?")) return;
+    try {
+      const res = await axios.delete(`http://localhost:8000/api/recipes/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.status) {
+        setData(prev => ({
+          ...prev,
+          recipes: prev.recipes.filter(r => r.id !== id),
+          recipes_count: prev.recipes_count - 1
+        }));
+        alert(res.data.message);
+      }
+    } catch (err) {
+      alert("Không thể xóa công thức. Vui lòng kiểm tra lại Backend!");
+    }
+  };
+
+const handleDeleteBlog = async (id) => {
+  if (!window.confirm("Bạn có chắc muốn xóa bài viết này không?")) return;
+  try {
+    const res = await axios.delete(`http://localhost:8000/api/blogs/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.data.status) {
+      setData({
+        ...data,
+        blogs: data.blogs.filter(b => b.id !== id),
+        blogs_count: (data.blogs_count || 1) - 1
+      });
+      alert(res.data.message);
+    }
+  } catch (err) {
+    alert("Không thể xóa bài viết!");
+  }
+};
+
   if (loading) return <div className="p-20 text-center font-bold text-orange-600">Đang tải thông tin...</div>;
 
   return (
@@ -196,7 +235,13 @@ const Profile = ({ token }) => {
         {data?.blogs && data.blogs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             {data.blogs.map(blog => (
-              <div key={blog.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div key={blog.id} className="relative group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <button 
+                  onClick={(e) => handleDeleteBlog(blog.id, e)}
+                  className="absolute top-2 right-2 p-1.5 bg-white/80 text-red-500 rounded-full group-hover:opacity-100 transition-opacity z-10 shadow-md hover:bg-red-50"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
                 <img src={blog.image_featured} alt={blog.title} className="w-full h-40 object-cover" />
                 <div className="p-4">
                   <h3 className="text-lg font-bold text-gray-800 mb-1">{blog.title}</h3>
@@ -215,7 +260,13 @@ const Profile = ({ token }) => {
         {data?.recipes && data.recipes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {data.recipes.map(recipe => (
-              <div key={recipe.id} onClick={() => navigate(`/recipe/${recipe.slug}`)} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex hover:shadow-md transition">
+              <div key={recipe.id} onClick={() => navigate(`/recipe/${recipe.slug}`)} className="relative group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex hover:shadow-md transition">
+                <button 
+                  onClick={(e) => handleDeleteRecipe(recipe.id, e)}
+                  className="absolute top-2 right-2 p-1.5 bg-white/80 text-red-500 rounded-full group-hover:opacity-100 transition-opacity z-10 shadow-md hover:bg-red-50"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
                 <img src={recipe.img_path} alt={recipe.title} className="w-32 h-32 object-cover" />
                 
                 <div className="p-4 flex-1 flex flex-col justify-between">
@@ -226,8 +277,8 @@ const Profile = ({ token }) => {
                   
                   <div className="flex items-center gap-2 text-xs text-gray-500">
                     <img 
-                      src={recipe.user?.img_avatar} 
-                      alt={recipe.user?.full_name} 
+                      src={data?.img_avatar} 
+                      alt={data?.full_name} 
                       className="w-5 h-5 rounded-full object-cover" 
                     />
                     <span>{recipe.user?.full_name}</span>
