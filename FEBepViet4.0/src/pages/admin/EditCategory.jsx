@@ -13,6 +13,7 @@ function EditCategory()
         const fetchCategoriesById = async()=>{
             try{
          const data = await getCategoryById(id);
+         console.log(data);
             setName(data.name);
             setStatus(data.status)
             console.log(data);
@@ -70,8 +71,8 @@ function EditCategory()
                                     value={status}
                                     onChange={(e) => setStatus(Number(e.target.value))}
                                 >
-                                    <option value={1}>Hoạt động</option>
-                                    <option value={0}>Khóa</option>
+                                    <option value={0}>Hoạt động</option>
+                                    <option value={1}>Khóa</option>
                                 </select>
                             </div>
                                  <button type="submit" className="btn btn-primary w-100">Lưu</button>

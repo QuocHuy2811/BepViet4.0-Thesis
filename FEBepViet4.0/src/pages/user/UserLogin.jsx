@@ -10,7 +10,7 @@ function UserLogin({token,setUser})
  const handleSubmit= async(e)=>{
         e.preventDefault();
         setErrors({});
-       const res=await fetch("http://localhost:8000/api/dang-nhap",
+        const res=await fetch("http://localhost:8000/api/dang-nhap",
             {
                 method:'POST',
                 body:JSON.stringify({username:username,password:password}),

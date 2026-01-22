@@ -61,7 +61,7 @@ const fetchFollowed=()=>{
   
 const fetchAll=()=>{
    vi_tri.current="tat_ca";
-  fetch("http://localhost:8000/api/")
+  fetch("http://localhost:8000/api/home")
   .then((res)=>res.json())
   .then((data)=>{
    setRecipes(data.danh_sach.data);
@@ -70,7 +70,7 @@ const fetchAll=()=>{
 }
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api")
+    fetch("http://127.0.0.1:8000/api/home")
       .then((res) => res.json())
       .then((data) => {
         setView(data.luot_xem_nhieu_nhat);

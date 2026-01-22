@@ -37,7 +37,7 @@ const AdminRoutes = () => useRoutes([
             { path: 'quan-ly-binh-luan', element: <Comments /> },
             { path: 'quan-ly-cong-thuc', element: <Recipes /> },
             { path: 'xem-chi-tiet-cong-thuc/:id', element: <RecipeDetail /> },
-            { path: 'sua-danh-muc/:slug', element: <EditCategory /> },
+            { path: 'sua-danh-muc/:id', element: <EditCategory /> },
            
         ]
     },

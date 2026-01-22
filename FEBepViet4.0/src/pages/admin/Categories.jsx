@@ -29,7 +29,7 @@ const Categories = () => {
                     <h1 className="h2 fw-bold text-dark">📋 Quản lý danh mục</h1>
                     <p className="text-muted small">Tổng số danh mục: <span className="badge bg-info">{categories.length}</span></p>
                 </div>
-                <Link class="btn btn-primary" to="/admin/them-danh-muc">Thêm</Link>
+                <Link className="btn btn-primary" to="/admin/them-danh-muc">Thêm</Link>
             </div>
 
           
@@ -74,7 +74,7 @@ const Categories = () => {
                                             <code className="bg-light px-2 py-1 rounded">{cat.slug}</code>
                                         </td>
                                         <td>
-                                            {cat.status === 1 ? (
+                                            {cat.status === 0 ? (
                                                 <span className="badge bg-success">
                                                     <i className="bi bi-check-circle"></i> Hoạt động
                                                 </span>
