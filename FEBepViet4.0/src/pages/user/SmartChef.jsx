@@ -16,10 +16,10 @@ const SmartChef = () => {
     try {
       const result = await getRecipeSuggestions(ingredients);
       console.log(result);
-      setSuggestions(result.recipes);
+      setSuggestions(result.data.recipes);
     } catch (e) {
       console.error(e);
-      if (e.message.includes('Lỗi kết nối Gemini API')) {
+      if (e.message.includes('Lỗi kết nối  Ai API')) {
          setError('Không thể kết nối tới đầu bếp AI');
       } else {
          setError(e.message || 'Có lỗi xảy ra khi kết nối với đầu bếp AI.');
@@ -76,7 +76,7 @@ const SmartChef = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-5xl mx-auto p-4 md:p-8 mt-4">
+      <div className="max-w-7xl mx-auto p-8 md:p-18 mt-4">
         {error && (
           <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 mb-8 text-center animate-fade-in shadow-sm max-w-2xl mx-auto">
              <div className="font-bold mb-1 flex justify-center items-center gap-2">
@@ -125,7 +125,7 @@ const SmartChef = () => {
           {suggestions.map((recipe, idx) => (
             <div key={idx} className="bg-white rounded-3xl shadow-lg shadow-orange-100/50 border border-orange-50 overflow-hidden hover:shadow-xl transition-all duration-300">
               {/* Card Header */}
-              <div className="p-6 md:p-8 border-b border-gray-100 bg-gradient-to-r from-white to-orange-50/30">
+              <div className="p-10 md:p-14 border-b border-gray-100 bg-gradient-to-r from-white to-orange-50/30">
                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
                     <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">{recipe.name}</h2>
                     <div className="flex items-center gap-2">
@@ -142,7 +142,7 @@ const SmartChef = () => {
               </div>
 
               {/* Card Body */}
-              <div className="p-6 md:p-8">
+              <div className="p-10 md:p-14">
                  <div className="grid md:grid-cols-12 gap-8">
                     
                     {/* Left Column: Ingredients */}

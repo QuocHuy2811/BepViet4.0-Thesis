@@ -3,8 +3,11 @@
 use App\Http\Controllers\admin\AdminUserController; //Huy 21/01/2026
 use App\Http\Controllers\user\HomeController;
 use App\Http\Controllers\user\UserController;
+use App\Http\Controllers\user\AiChefController;
+use App\Http\Controllers\admin\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 //Nguyen Kien Duy 18/01/2026 8:00
@@ -14,13 +17,9 @@ Route::post("/dang-nhap", [UserController::class, "dangNhap"]);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post("/dang-xuat", [UserController::class, "dangXuat"]);
     Route::get("/bai-viet-followed", [HomeController::class, "timBaiVietCuaFollow"]); //(Cap nhat)
-    Route::get("/user", function (Request $request) {
-        return response()->json([
-            "status" => true,
-            "user" => $request->user()
-        ]);
-    });
-    //api gợi ý món ăn bằng AI
+    
+
+   //api gợi ý món ăn bằng AI
 Route::post('/ai/suggest-recipes', [AiChefController::class, 'suggestRecipes']);
 // api load danh sách categories
 Route::get('/admin/categories', [CategoryController::class, 'index'])->name('category.index');
@@ -29,6 +28,14 @@ Route::post('admin/categories/add', [CategoryController::class, 'store'])->name(
 // api update category
 Route::get('admin/categories/{id}', [CategoryController::class, 'show'])->name('category.show');
 Route::put('admin/categories/{id}', [CategoryController::class, 'update'])->name('category.update');
+
+    Route::get("/user", function (Request $request) {
+        return response()->json([
+            "status" => true,
+            "user" => $request->user()
+        ]);
+    });
+
 });
 Route::get("/", [HomeController::class, "index"]);
 //Mguyen Kien Duy 21/01/2026 11:00
@@ -49,24 +56,10 @@ Route::get('/categories', function () {
 });
 
 // Route YÊU CẦU ĐĂNG NHẬP (Token hợp lệ mới vào được đây)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
 
-    Route::post('/recipes', [RecipeController::class, 'store']);
-    // --- KHU VỰC ADMIN ---
-    Route::prefix('admin')->group(function() {
-        // Lấy danh sách user: GET /api/admin/users
-        Route::get('/users', [AdminUserController::class, 'index']);
-        
-        // Cập nhật trạng thái: PUT /api/admin/users/{id}/status
-        Route::put('/users/{id}/status', [AdminUserController::class, 'updateStatus']);
-    });
-});
 
-use App\Http\Controllers\user\AiChefController;
-use App\Http\Controllers\admin\CategoryController;
+
+ 
 
 Route::get('/user', function (Request $request) {
     return $request->user();
