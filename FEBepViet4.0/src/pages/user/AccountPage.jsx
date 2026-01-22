@@ -35,7 +35,7 @@ export default function AccountPage({ token }) {
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8000/api/user", {
+      const res = await axios.get("http://localhost:8000/api/profile-info", {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.status) {
@@ -48,6 +48,8 @@ export default function AccountPage({ token }) {
       }
     } catch (err) {
       console.error("Lỗi tải thông tin tài khoản:", err);
+      console.error("Mã lỗi:", err.response?.status);
+      console.error("Dữ liệu lỗi từ Server:", err.response?.data);
     } finally {
       setLoading(false);
     }
@@ -117,13 +119,13 @@ export default function AccountPage({ token }) {
             {isEditing ? (
               <>
                 <button 
-                  className='bg-gray-400 text-white px-4 py-2 rounded-lg font-bold hover:bg-gray-500 transition'
+                  className='bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition'
                   onClick={() => setIsEditing(false)}
                 >
                   Hủy
                 </button>
                 <button 
-                  className='bg-green-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-700 transition'
+                  className='bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition'
                   onClick={handleSaveInfo}
                 >
                   Lưu

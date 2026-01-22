@@ -49,6 +49,7 @@ Route::middleware(['auth:sanctum', checkStatusUser::class])->group(function () {
     Route::get("/profile-info", [UserController::class, "thongTinProfile"]);
     Route::post("/profile-update", [UserController::class, "capNhatProfile"]);
     Route::post("/cookbooks/create", [UserController::class, "taoCookbook"]);
+    Route::delete("/cookbooks/{id}", [UserController::class, "xoaCookbook"]);
     Route::get("/nguoi-dung", function (Request $request) {
         return response()->json($request->user());
     });

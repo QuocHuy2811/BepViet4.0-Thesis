@@ -53,7 +53,7 @@ class UserController extends Controller
             return response()->json([
                 "status" => true,
                 "message" => "Đăng nhập thành công",
-                "token" => Auth::user()->createToken("API TOKEN")->plainTextToken,
+                "token" => $user->createToken("API TOKEN")->plainTextToken,
                 "token_type" => "Bearer",
                 "user" => $request->user()
             ], 200);
@@ -111,8 +111,28 @@ class UserController extends Controller
             "message" => "Tạo bộ sưu tập thành công",
             "data" => $cookbook
         ], 201);
-        
+    }
+
+    //Phan Lac An 22/01/2026
+    public function xoaCookbook(Request $request, $id)
+    {
+        // Tìm cookbook thuộc về user đang đăng nhập để đảm bảo tính bảo mật
+        $cookbook = $request->user()->cookbooks()->find($id);
+
+        if (!$cookbook) {
+            return response()->json([
+                "status" => false,
+                "message" => "Không tìm thấy bộ sưu tập hoặc bạn không có quyền xóa"
+            ], 404);
         }
+
+        $cookbook->delete();
+
+        return response()->json([
+            "status" => true,
+            "message" => "Xóa bộ sưu tập thành công"
+        ], 200);
+    }
 
     //Nguyen Kien Duy 21/01/2025 10:00
     public function forgetPassword(ForgetPasswordRequest $request)

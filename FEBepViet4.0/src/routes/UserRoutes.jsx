@@ -27,7 +27,6 @@ const UserRoutes = ({token,setUser}) => useRoutes([
       { path: 'profile', element: <Profile token={token}/> },
       { path: 'account', element: <AccountPage token={token}/> },
       { path: 'recipe/:slug', element: <RecipeDetail /> },
-      { path: 'account', element: <AccountPage /> },
       { path: 'login', element: <UserLogin token={token} setUser={setUser}/> },
       { path: 'signup', element: <UserSignup/> },
       { path: 'forget-password', element: <ForgetPassword/> },
