@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
-            $table->id();
-            $table->string("logo");
-            $table->string("footer");
+        Schema::table('settings', function (Blueprint $table) {
             $table->string("gmail");
             $table->string("phone");
-            $table->string("link_facebook")->nullable();
-            $table->string("link_youtube")->nullable();
         });
     }
 
@@ -27,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('settings');
+        Schema::table('settings', function (Blueprint $table) {
+            //
+        });
     }
 };

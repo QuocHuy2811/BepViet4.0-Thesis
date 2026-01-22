@@ -6,7 +6,7 @@ use App\Http\Controllers\user\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\user\BlogController;
-
+use App\Http\Controllers\Admin\SettingController;
 //Nguyen Kien Duy 18/01/2026 8:00
 //Nguyen Kien Duy 19/01/2026 12:46 (Cap nhat)
 Route::post("/dang-ky", [UserController::class, "dangKy"]);
@@ -23,7 +23,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/blogs', [BlogController::class, 'blog']);
     Route::put('/blogs/{id}', [BlogController::class, 'update']);
     Route::delete('/blogs/{id}', [BlogController::class, 'delete']);
+
 });
+Route::get('/settings', [SettingController::class, 'index']);
+Route::match(['POST','PUT'], '/settings', [SettingController::class, 'update']);
+
 Route::get("/home", [HomeController::class, "index"]);
     //Mguyen Kien Duy 21/01/2026 11:00
 Route::post("/forget-password", [UserController::class, "forgetPassword"]);
@@ -35,6 +39,7 @@ Route::get('/blogs', [BlogController::class, 'index']);
 //
 use App\Http\Controllers\RecipeController;
 use App\Models\Category;
+
 
 
 // Route công khai (Ai cũng xem được danh mục)

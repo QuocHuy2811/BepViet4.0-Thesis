@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import useAppSetting from "../../hooks/useAppSetting";
+
+const API_HOST = "http://127.0.0.1:8000";
 
 export const Navigation = () => {
   // Nếu cần Navigation riêng thì code ở đây
@@ -10,6 +13,7 @@ export const DesktopSidebar = ({token,setUser}) => {
   const [showGearMenu, setShowGearMenu] = useState(false);
   const [info,setInfo]=useState({});
   const navigate = useNavigate();
+  const setting = useAppSetting();
 
   const handleLogout = () => {
     fetch("http://localhost:8000/api/dang-xuat",{
@@ -56,13 +60,18 @@ export const DesktopSidebar = ({token,setUser}) => {
     <div className="hidden md:flex flex-col w-64 h-screen bg-white border-r border-gray-100 shadow-xl fixed left-0 top-0 overflow-y-auto z-50">
      
       <div className="p-6 border-b border-gray-100 bg-white sticky top-0 z-10">
-        <h1 className="text-2xl font-extrabold text-gray-800 flex items-center gap-3 tracking-tight">
-          <span className="text-3xl filter drop-shadow-sm">🍲</span> 
-          <span className="bg-gradient-to-r from-orange-600 to-red-500 bg-clip-text text-transparent">
-            Bếp Việt 4.0
-          </span>
-        </h1>
-      </div>
+      <h1 className="text-2xl font-extrabold text-gray-800 flex items-center gap-3 tracking-tight">
+        <img
+          src={setting?.logo ? `${API_HOST}/storage/${setting.logo}` : "/img/logo.png"}
+          alt="logo"
+          className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm"
+        />
+        <span className="bg-gradient-to-r from-orange-600 to-red-500 bg-clip-text text-transparent">
+          {"Bếp Việt 4.0"}
+        </span>
+      </h1>
+    </div>
+
 
      
       <div className="flex-1 py-6 px-4 space-y-2 overflow-y-auto " >

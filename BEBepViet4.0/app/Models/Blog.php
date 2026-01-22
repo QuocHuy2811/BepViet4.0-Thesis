@@ -25,9 +25,7 @@ class Blog extends Model
                 'onUpdate'=>true,
             ]
         ];
-     }
-
-
+    }
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'blog_tags', 'blog_id', 'tag_id');
