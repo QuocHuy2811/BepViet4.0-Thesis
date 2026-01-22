@@ -131,6 +131,7 @@ export default function BlogFeed() {
               )}
 
               <div className="p-4">
+                <div className="text-xs text-gray-500 mt-1">{b.author.full_name}</div>
                 <div className="font-bold">{b.title}</div>
                 <div className="text-sm text-gray-600 mt-1">{b.content}</div>
 
