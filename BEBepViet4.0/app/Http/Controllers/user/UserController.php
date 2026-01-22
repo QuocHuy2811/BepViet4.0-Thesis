@@ -108,6 +108,8 @@ class UserController extends Controller
             "message" => "Tạo bộ sưu tập thành công",
             "data" => $cookbook
         ], 201);
+        
+        }
 
     //Nguyen Kien Duy 21/01/2025 10:00
     public function forgetPassword(ForgetPasswordRequest $request)

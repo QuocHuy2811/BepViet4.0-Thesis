@@ -22,7 +22,6 @@ class Category extends Model
     public $timestamps = false;
     protected $table = 'categories';
 
-    protected $fillable = ['name', 'slug'];
 
     // Quan hệ: Một danh mục có nhiều công thức nấu ăn
     public function recipes()

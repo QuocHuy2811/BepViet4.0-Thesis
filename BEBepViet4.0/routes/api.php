@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 use App\Http\Controllers\user\AiChefController;
-use App\Http\Controllers\admin\CategoryController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
