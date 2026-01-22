@@ -14,21 +14,23 @@ export const DesktopSidebar = ({ token, setUser }) => {
   const handleLogout = () => {
     fetch("http://localhost:8000/api/dang-xuat", {
       method: "POST",
-      headers: {
+      headers:
+      {
         "Authorization": `Bearer ${token}`,
-        "Accept": "application/json", // [QUAN TRỌNG] Bắt buộc phải có để Laravel trả về JSON lỗi thay vì HTML
+        "Accept": "application/json",
         "Content-Type": "application/json"
       }
     })
       .then((res) => {
-        // Kiểm tra nếu token hết hạn hoặc lỗi thì vẫn xóa localstorage
-        if (!res.ok) {
-          throw new Error("Lỗi request");
-        }
+        if (!res.ok) throw new Error("Logout failed");
         return res.json();
       })
       .then((data) => {
-        // ... xử lý thành công
+        // Xử lý khi API đăng xuất thành công
+        console.log("Đăng xuất thành công", data);
+        localStorage.removeItem("token");
+        setUser(null);
+        navigate("/");
       })
       .catch((err) => {
         // Dù lỗi API (do token sai) cũng phải cho đăng xuất ở client

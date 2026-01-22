@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\CreateCookbookRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -45,10 +47,12 @@ class UserController extends Controller
     {
 
         if (Auth::attempt(["username" => $request->username, "password" => $request->password])) {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
             return response()->json([
                 "status" => true,
                 "message" => "Đăng nhập thành công",
-                "token" => Auth::user()->createToken("API TOKEN")->plainTextToken,
+                "token" => $user->createToken("API TOKEN")->plainTextToken,
                 "token_type" => "Bearer"
             ], 200);
         } else {
@@ -69,6 +73,43 @@ class UserController extends Controller
     }
     //Nguyen Kien Duy 18/01/2026 9:36
 
+    //Phan Lac An 21/01/2026
+    public function thongTinProfile(Request $request)
+    {
+        $user = $request->user()->getFullProfile();
+        return response()->json([
+            "status" => true,
+            "user"   => $user
+        ], 200);
+    }
+
+    //Phan Lac An 21/01/2026
+    public function capNhatProfile(UpdateProfileRequest $request)
+    {
+        $data = $request->validated();
+        
+        $status = $request->user()->updateProfile(
+            $data, // Truyền mảng dữ liệu bao gồm full_name, username, email, bio
+            $request->file('img_avatar')
+        );
+        return response()->json([
+            "status"  => $status,
+            "message" => "Cập nhật thông tin thành công!",
+            "user"    => $request->user()->fresh() // Trả về data mới nhất để React cập nhật giao diện
+        ], 200);
+    }
+
+    //Phan Lac An 21/01/2026
+    public function taoCookbook(CreateCookbookRequest $request)
+    {
+        $cookbook = $request->user()->createNewCookbook($request->name);
+        return response()->json([
+            "status" => true,
+            "message" => "Tạo bộ sưu tập thành công",
+            "data" => $cookbook
+        ], 201);
+        
+        }
 
     //Nguyen Kien Duy 21/01/2025 10:00
     public function forgetPassword(ForgetPasswordRequest $request)
