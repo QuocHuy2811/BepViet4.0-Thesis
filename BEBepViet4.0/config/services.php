@@ -13,7 +13,7 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
-    'gemini'=>[
+    'AI'=>[
         'key'=>env('API_KEY'),
     ],
 

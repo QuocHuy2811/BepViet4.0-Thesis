@@ -31,7 +31,7 @@ export const getCategoryById = async (id)=>
     const response = await fetch(`${API_URL_BASE}/${id}`);
     if(!response.ok)
     {
-        throw new Error("Lỗi Id category");
+        throw new Error("Lỗi category");
     }
     return await response.json();
 }

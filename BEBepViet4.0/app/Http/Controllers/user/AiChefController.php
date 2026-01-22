@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 class AiChefController extends Controller
 {
     public function suggestRecipes(Request $request)
@@ -14,11 +15,12 @@ class AiChefController extends Controller
             'ingredients' => 'required|string',
         ]);
         $ingredients = $request->input('ingredients');
-        $apiKey = config('services.gemini.key'); 
+        $apiKey = config('services.AI.key'); 
 
         $prompt = "
           Dữ liệu đầu vào từ người dùng (USER_INPUT): \"$ingredients\".
           Yêu cầu cao nhất: (phải đưa ra được vài món ít nhất là 3)
+          và đặc biệt bắt buộc phải ra kết quả cho tôi không có chuyện trả chuỗi rỗng
           - Ngôn ngữ: Tiếng Việt chuẩn 100%, trang trọng. TUYỆT ĐỐI KHÔNG dùng tiếng Trung , không dùng tiếng Anh bồi vào.
         -ƯU TIÊN PHƯƠNG PHÁP TRUYỀN THỐNG
           - với các kết quả trả ra là các công thức (các món) có độ khó: dễ , trung  bình , khó xen lẫn nhau 
@@ -84,8 +86,8 @@ class AiChefController extends Controller
                     'Content-Type' => 'application/json',
                     'Authorization' => 'Bearer ' . $apiKey, 
                 ])
-                ->post("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", [
-                    'model' => 'gemini-2.5-flash',
+                ->post("https://api.groq.com/openai/v1/chat/completions", [
+                    'model' => 'openai/gpt-oss-120b',
                     'messages' => [
                         [
                             'role' => 'user',
