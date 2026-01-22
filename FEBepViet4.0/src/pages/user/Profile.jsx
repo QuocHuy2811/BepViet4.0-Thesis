@@ -186,14 +186,21 @@ const Profile = ({ token }) => {
         {/* Blog & Review Section */}
         <h2 className="text-lg font-bold text-gray-800 mb-4">Blog & Review</h2>
         {data?.blogs && data.blogs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div className="space-y-4">
             {data.blogs.map(blog => (
-              <div key={blog.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <img src={blog.image_featured} alt={blog.title} className="w-full h-40 object-cover" />
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-gray-800 mb-1">{blog.title}</h3>
-                  <p className="text-gray-500 text-sm line-clamp-2">{blog.content}</p>
-                </div>
+              <div key={blog.id} className="border rounded-lg bg-white p-4 shadow-md max-w-2xl mx-auto hover:shadow-lg transition-shadow">
+              
+                {blog.thumbnail && blog.thumbnail !== "null" && (
+                  <img src={`http://localhost:8000/storage/${blog.thumbnail}`}  className="w-full rounded-lg mb-3" />
+                )}
+               
+                <h3 className="text-lg font-bold mb-2 text-gray-800">{blog.title}</h3>
+                <p className="text-gray-700 leading-relaxed mb-3 whitespace-pre-wrap">{blog.content}</p>
+                {blog.tags?.length > 0 && (
+                  <div className="text-sm text-orange-600 mb-3">
+                    {blog.tags.map(t => `#${t.name}`).join(" ")}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -203,12 +210,12 @@ const Profile = ({ token }) => {
 
 
         {/* Recipes posted by user */}
-        <h2 className="text-lg font-bold text-gray-800 mb-4">Công thức đã đăng</h2>
+        <h2 className="text-lg font-bold text-gray-800 mb-4 mt-10">Công thức đã đăng</h2>
         {data?.recipes && data.recipes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {data.recipes.map(recipe => (
               <div key={recipe.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex hover:shadow-md transition">
-                <img src={recipe.image_path} alt={recipe.title} className="w-32 h-32 object-cover" />
+                <img src={recipe.img_path} alt={recipe.title} className="w-32 h-32 object-cover" />
                 
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
@@ -217,11 +224,7 @@ const Profile = ({ token }) => {
                   </div>
                   
                   <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <img 
-                      src={recipe.user?.img_avatar} 
-                      alt={recipe.user?.full_name} 
-                      className="w-5 h-5 rounded-full object-cover" 
-                    />
+                   
                     <span>{recipe.user?.full_name}</span>
                     <span>•</span>
                     <span>{recipe.region}</span>
