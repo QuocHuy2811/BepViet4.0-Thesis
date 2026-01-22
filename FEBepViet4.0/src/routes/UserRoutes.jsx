@@ -12,6 +12,7 @@ import UserLogin from '../pages/user/UserLogin.jsx';
 import UserSignup from '../pages/user/UserSignup.jsx';
 import ForgetPassword from '../pages/user/ForgetPassword.jsx';
 import ResetPassword from '../pages/user/ResetPassword.jsx';
+import EditRecipe from '../pages/user/EditRecipe.jsx';
 import { useRoutes } from 'react-router-dom';
 
 const UserRoutes = ({token,setUser}) => useRoutes([
@@ -27,11 +28,11 @@ const UserRoutes = ({token,setUser}) => useRoutes([
       { path: 'profile', element: <Profile token={token}/> },
       { path: 'account', element: <AccountPage token={token}/> },
       { path: 'recipe/:slug', element: <RecipeDetail /> },
-      { path: 'account', element: <AccountPage /> },
       { path: 'login', element: <UserLogin token={token} setUser={setUser}/> },
       { path: 'signup', element: <UserSignup/> },
       { path: 'forget-password', element: <ForgetPassword/> },
       { path: 'reset-password/:token', element: <ResetPassword/> },
+      { path: 'recipe/edit/:id', element: <EditRecipe token={token} /> },
     ]
   }
 ]);

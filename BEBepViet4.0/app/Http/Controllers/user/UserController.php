@@ -10,6 +10,7 @@ use App\Http\Requests\SignupRequest;
 use App\Mail\ForgetPasswordMail;
 use App\Models\Follow;
 use App\Models\User;
+use App\Models\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -53,7 +54,7 @@ class UserController extends Controller
             return response()->json([
                 "status" => true,
                 "message" => "Đăng nhập thành công",
-                "token" => Auth::user()->createToken("API TOKEN")->plainTextToken,
+                "token" => $user->createToken("API TOKEN")->plainTextToken,
                 "token_type" => "Bearer",
                 "user" => $request->user()
             ], 200);
@@ -111,8 +112,110 @@ class UserController extends Controller
             "message" => "Tạo bộ sưu tập thành công",
             "data" => $cookbook
         ], 201);
-        
+    }
+
+    //Phan Lac An 22/01/2026
+    public function xoaCookbook(Request $request, $id)
+    {
+        // Tìm cookbook thuộc về user đang đăng nhập để đảm bảo tính bảo mật
+        $cookbook = $request->user()->cookbooks()->find($id);
+
+        if (!$cookbook) {
+            return response()->json([
+                "status" => false,
+                "message" => "Không tìm thấy bộ sưu tập hoặc bạn không có quyền xóa"
+            ], 404);
         }
+
+        $cookbook->delete();
+
+        return response()->json([
+            "status" => true,
+            "message" => "Xóa bộ sưu tập thành công"
+        ], 200);
+    }
+
+    //Phan Lac An 22/01/2026
+    public function xoaRecipe(Request $request, $id)
+    {
+        // Sử dụng Eloquent để tìm công thức thuộc về User
+        $recipe = $request->user()->recipes()->find($id);
+
+        if (!$recipe) {
+            return response()->json([
+                "status" => false,
+                "message" => "Bạn không có quyền xóa hoặc công thức không tồn tại"
+            ], 404);
+        }
+
+        $recipe->xoaHoanToanCongThuc();
+
+        return response()->json([
+            "status" => true,
+            "message" => "Đã xóa công thức thành công!"
+        ]);
+    }
+
+    //Phan Lac An 22/01/2026
+    public function xoaBlog(Request $request, $id)
+    {
+        $blog = $request->user()->blogs()->find($id);
+
+        if (!$blog) {
+            return response()->json(["status" => false, "message" => "Không tìm thấy bài viết hoặc bạn không có quyền xóa"], 404);
+        }
+
+        if ($blog->xoaBlogs()) {
+        return response()->json([
+            "status"  => true,
+            "message" => "Xóa bài viết thành công!"
+        ], 200);
+    }
+
+    return response()->json([
+        "status"  => false,
+        "message" => "Có lỗi xảy ra khi thực hiện xóa"
+    ], 500);
+    }
+
+    public function layDuLieuSuaRecipe(Request $request, $id)
+    {
+        $recipe = Recipe::getRecipeForEdit($id);
+
+        if (!$recipe) {
+            return response()->json([
+                "status" => false,
+                "message" => "Không tìm thấy công thức này"
+            ], 404);
+        }
+
+        // 3. Kiểm tra quyền sở hữu
+        if ($recipe->user_id !== $request->user()->id) {
+            return response()->json([
+                "status" => false,
+                "message" => "Bạn không có quyền chỉnh sửa công thức này"
+            ], 403);
+        }
+
+        return response()->json([
+            "status" => true,
+            "recipe" => $recipe
+        ], 200);
+    }
+
+    //Phan Lac An 22/01/2026
+    public function capNhatRecipe(Request $request, $id)
+    {
+        $recipe = $request->user()->recipes()->find($id);
+        
+        if (!$recipe) {
+            return response()->json(["status" => false, "message" => "Không có quyền sửa"], 403);
+        }
+
+        $recipe->updateRecipe($request->all(), $request->file('img_path'));
+
+        return response()->json(["status" => true, "message" => "Cập nhật thành công"]);
+    }
 
     //Nguyen Kien Duy 21/01/2025 10:00
     public function forgetPassword(ForgetPasswordRequest $request)

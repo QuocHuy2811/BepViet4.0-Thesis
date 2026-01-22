@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Recipe extends Model
 {
@@ -81,5 +82,76 @@ class Recipe extends Model
     public function steps()
     {
         return $this->hasMany(Step::class);
+    }
+
+    //Phan Lac An 22/01/2026
+    public function xoaHoanToanCongThuc()
+    {
+        return DB::transaction(function () {
+            $this->ingredients()->delete(); 
+            $this->steps()->delete();
+
+            if ($this->ratings()) {
+                $this->ratings()->delete();
+            }
+            //Xóa các mối quan hệ nhiều-nhiều (BelongsToMany)
+            $this->tags()->detach();
+
+            DB::table('recipe_cookbooks')->where('recipe_id', $this->id)->delete();
+
+            return $this->delete();
+        });
+    }
+
+    //Phan Lac An 22/01/2026
+    public function updateRecipe($data, $file = null)
+    {
+        return DB::transaction(function () use ($data, $file) {
+            //Xử lý ảnh nếu có upload mới
+            if ($file) {
+                $data['img_path'] = $file->store('recipes', 'public');
+            }
+
+            $recipeData = collect($data)->except(['ingredients', 'steps'])->toArray();
+            $this->update($recipeData);
+
+            //Xử lý cập nhật Nguyên liệu
+            if (isset($data['ingredients'])) {
+                // Giải mã chuỗi JSON từ Frontend thành mảng PHP
+                $ingredientsArr = is_string($data['ingredients']) 
+                    ? json_decode($data['ingredients'], true) 
+                    : $data['ingredients'];
+
+                if (is_array($ingredientsArr)) {
+                    $this->ingredients()->delete();
+                    $this->ingredients()->createMany($ingredientsArr);
+                }
+            }
+
+            //Xử lý cập nhật Các bước (Steps)
+            if (isset($data['steps'])) {
+                $this->steps()->delete();
+                
+                // Xử lý dữ liệu steps trước khi insert
+                $stepsArr = is_string($data['steps']) ? json_decode($data['steps'], true) : $data['steps'];
+                
+                $formattedSteps = array_map(function($step) {
+                    return [
+                        'step_number' => $step['step_number'],
+                        'content'     => $step['content'],
+                        'step_image'   => $step['step_image'] ?? null, // Đảm bảo luôn có key này
+                    ];
+                }, $stepsArr);
+
+                $this->steps()->createMany($formattedSteps);
+            }
+            return $this;
+        });
+    }
+
+    //Phan Lac An 22/01/2026
+    public static function getRecipeForEdit($id)
+    {
+        return self::with(['ingredients', 'steps'])->find($id);
     }
 }

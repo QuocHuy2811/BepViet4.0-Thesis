@@ -48,6 +48,12 @@ Route::middleware(['auth:sanctum', checkStatusUser::class])->group(function () {
     Route::get("/profile-info", [UserController::class, "thongTinProfile"]);
     Route::post("/profile-update", [UserController::class, "capNhatProfile"]);
     Route::post("/cookbooks/create", [UserController::class, "taoCookbook"]);
+    Route::delete("/cookbooks/{id}", [UserController::class, "xoaCookbook"]);
+    Route::delete("/recipes/{id}", [UserController::class, "xoaRecipe"]);
+    Route::delete("/blogs/{id}", [UserController::class, "xoaBlog"]);
+    Route::post("/recipes/update/{id}", [UserController::class, "capNhatRecipe"]);
+    Route::get("/recipe-edit-data/{id}", [UserController::class, "layDuLieuSuaRecipe"]);
+
     Route::get("/nguoi-dung", function (Request $request) {
         return response()->json($request->user());
     });

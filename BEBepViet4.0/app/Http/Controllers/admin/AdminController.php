@@ -11,6 +11,7 @@ class AdminController extends Controller
 {
     public function dangNhap(LoginRequest $request)
     {
+        /** @var \App\Models\User $user */
 
         if (Auth::attempt(["username" => $request->username, "password" => $request->password])) {
             return response()->json([

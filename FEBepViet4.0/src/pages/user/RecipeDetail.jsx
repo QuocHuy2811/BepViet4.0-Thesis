@@ -121,6 +121,9 @@ if(loading)
     );
   }
 
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const isOwner = currentUser?.id === recipe.user_id;
+
   return (
     <div className="bg-white min-h-screen pb-24">
       {/* Header Image */}
@@ -164,9 +167,19 @@ if(loading)
                   <h3 className="font-bold text-gray-800">{recipe.user.full_name}</h3>
                </div>
             </div>
-            <button onClick={handleFollow} className="bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-orange-200 transition-colors">
-               Theo dõi
-            </button>
+            <div className="flex gap-2">
+               {isOwner && (
+                  <button 
+                  onClick={() => navigate(`/recipe/edit/${recipe.id}`)}
+                  className="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-semibold"
+                  >
+                  Sửa công thức
+                  </button>
+               )}
+               <button onClick={handleFollow} className="bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-orange-200 transition-colors">
+                  Theo dõi
+               </button>
+            </div>
          </div>
 
          {/* Content Tabs */}

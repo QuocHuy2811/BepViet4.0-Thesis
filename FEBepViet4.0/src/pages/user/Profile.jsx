@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Profile = ({ token }) => {
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showCreateCookbook, setShowCreateCookbook] = useState(false);
@@ -60,24 +62,6 @@ const Profile = ({ token }) => {
   };
 
 
-  // const handleCreateCookbook = async () => {
-  //   if (!newCookbookName.trim()) return;
-  //   try {
-  //     const res = await axios.post("http://localhost:8000/api/cookbooks/create", 
-  //       { name: newCookbookName },
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     );
-  //     if (res.data.status) {
-  //       alert(res.data.message);
-  //       setNewCookbookName('');
-  //       setShowCreateCookbook(false);
-  //       fetchProfileData();
-  //     }
-  //   } catch (err) {
-  //     alert("Lỗi khi tạo bộ sưu tập!");
-  //   }
-  // };
-
   const handleCreateCookbook = async () => {
     if (!newCookbookName.trim()) return;
     try {
@@ -108,6 +92,69 @@ const Profile = ({ token }) => {
       alert("Lỗi khi tạo bộ sưu tập!");
     }
   };
+
+
+  const handleDeleteCookbook = async (id) => {
+  if (!window.confirm("Bạn có chắc chắn muốn xóa bộ sưu tập này không?")) return;
+
+    try {
+      const res = await axios.delete(`http://localhost:8000/api/cookbooks/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.data.status) {
+        // Cập nhật State để xóa cookbook khỏi giao diện ngay lập tức
+        setData({
+          ...data,
+          cookbooks: data.cookbooks.filter(cb => cb.id !== id),
+          cookbooks_count: data.cookbooks_count - 1
+        });
+        alert(res.data.message);
+      }
+    } catch (err) {
+      console.error("Lỗi xóa cookbook:", err);
+      alert("Không thể xóa bộ sưu tập lúc này!");
+    }
+  };
+
+  const handleDeleteRecipe = async (id, e) => {
+    e.stopPropagation(); // QUAN TRỌNG: Không cho nhảy vào trang chi tiết
+    if (!window.confirm("Bạn có chắc muốn xóa công thức này?")) return;
+    try {
+      const res = await axios.delete(`http://localhost:8000/api/recipes/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.status) {
+        setData(prev => ({
+          ...prev,
+          recipes: prev.recipes.filter(r => r.id !== id),
+          recipes_count: prev.recipes_count - 1
+        }));
+        alert(res.data.message);
+      }
+    } catch (err) {
+      alert("Không thể xóa công thức. Vui lòng kiểm tra lại Backend!");
+    }
+  };
+
+const handleDeleteBlog = async (id) => {
+  if (!window.confirm("Bạn có chắc muốn xóa bài viết này không?")) return;
+  try {
+    const res = await axios.delete(`http://localhost:8000/api/blogs/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.data.status) {
+      setData({
+        ...data,
+        blogs: data.blogs.filter(b => b.id !== id),
+        blogs_count: (data.blogs_count || 1) - 1
+      });
+      alert(res.data.message);
+    }
+  } catch (err) {
+    alert("Không thể xóa bài viết!");
+  }
+};
 
   if (loading) return <div className="p-20 text-center font-bold text-orange-600">Đang tải thông tin...</div>;
 
@@ -209,12 +256,19 @@ const Profile = ({ token }) => {
         )}
 
 
+
         {/* Recipes posted by user */}
         <h2 className="text-lg font-bold text-gray-800 mb-4 mt-10">Công thức đã đăng</h2>
         {data?.recipes && data.recipes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {data.recipes.map(recipe => (
-              <div key={recipe.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex hover:shadow-md transition">
+              <div key={recipe.id} onClick={() => navigate(`/recipe/${recipe.slug}`)} className="relative group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex hover:shadow-md transition">
+                <button 
+                  onClick={(e) => handleDeleteRecipe(recipe.id, e)}
+                  className="absolute top-2 right-2 p-1.5 bg-white/80 text-red-500 rounded-full group-hover:opacity-100 transition-opacity z-10 shadow-md hover:bg-red-50"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
                 <img src={recipe.img_path} alt={recipe.title} className="w-32 h-32 object-cover" />
                 
                 <div className="p-4 flex-1 flex flex-col justify-between">
@@ -224,7 +278,11 @@ const Profile = ({ token }) => {
                   </div>
                   
                   <div className="flex items-center gap-2 text-xs text-gray-500">
-                   
+                    <img 
+                      src={data?.img_avatar} 
+                      alt={data?.full_name} 
+                      className="w-5 h-5 rounded-full object-cover" 
+                    />
                     <span>{recipe.user?.full_name}</span>
                     <span>•</span>
                     <span>{recipe.region}</span>
@@ -263,12 +321,21 @@ const Profile = ({ token }) => {
         {data?.cookbooks && data.cookbooks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             {data.cookbooks.map(cb => (
-              <div key={cb.id} className="bg-orange-50 rounded-xl p-4 border border-orange-200">
+              <div key={cb.id} className="relative group bg-orange-50 rounded-xl p-4 border border-orange-200">
+                <button 
+                  onClick={() => handleDeleteCookbook(cb.id)}
+                  className="absolute top-2 right-2 p-1.5 bg-white text-red-500 rounded-full shadow-sm group-hover:opacity-100 transition-opacity hover:bg-red-50 z-20"
+                  title="Xóa bộ sưu tập"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
                 <h3 className="font-bold text-orange-700 text-lg mb-2">{cb.name}</h3>
                 <div className="flex flex-wrap gap-2">
                   {cb.recipes?.map(r => (
-                    <div key={r.id} className="bg-white px-2 py-1 rounded text-xs flex items-center gap-1 shadow-sm">
-                       <img src={r.image_path} className="w-5 h-5 object-cover rounded" alt="" />
+                    <div key={r.id} onClick={() => navigate(`/recipe/${r.slug}`)} className="bg-white px-2 py-1 rounded text-xs flex items-center gap-1 shadow-sm cursor-pointer hover:bg-orange-100 transition-colors">
+                       <img src={r.img_path} className="w-5 h-5 object-cover rounded" alt="" />
                        {r.title}
                     </div>
                   ))}

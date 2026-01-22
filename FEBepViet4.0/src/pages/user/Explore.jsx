@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import RecipeCard from './RecipeCard.jsx';
 
 const Explore = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -90,7 +92,7 @@ const Explore = () => {
         id: item.id,
         title: item.title,
         description: item.description,
-        image_path: item.img_path === 'null' ? 'https://via.placeholder.com/400' : item.img_path,
+        img_path: item.img_path === 'null' ? 'https://via.placeholder.com/400' : item.img_path,
         region: item.region,
         cook_time: item.cook_time + ' phút',
         difficult: item.difficult,
@@ -229,7 +231,7 @@ const Explore = () => {
             {recipes.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {recipes.map(recipe => (
-                  <RecipeCard key={recipe.id} recipe={recipe} />
+                  <RecipeCard key={recipe.id} recipe={recipe} onClick={() => navigate(`/recipe/${recipe.slug}`)}/>
                 ))}
               </div>
             ) : (
