@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('steps', function (Blueprint $table) {
-        $table->string('step_image')->nullable()->change();
-    });
+        Schema::create('blog_tags', function (Blueprint $table) {
+            $table->foreignId("blog_id")->references("id")->on("blogs");
+            $table->foreignId("tag_id")->references("id")->on("tags");
+            $table->primary(["blog_id", "tag_id"]);
+        });
     }
 
     /**
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('steps', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('blog_tags');
     }
 };

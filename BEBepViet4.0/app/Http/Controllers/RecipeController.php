@@ -74,7 +74,7 @@ class RecipeController extends Controller
                 }
             }
 
-            // --- LƯU CÁC BƯỚC (CÓ XỬ LÝ ẢNH) ---
+
             if ($request->has('steps')) {
                 // Lưu ý: $request->steps trả về mảng dữ liệu text.
                 // Để lấy file, ta cần dùng $request->file("steps.$index.image")

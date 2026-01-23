@@ -21,7 +21,7 @@ return new class extends Migration
             $table->longText("description");
             $table->string("img_path");
             $table->bigInteger("cook_time");
-            $table->integer('views')->default(0);
+            $table->integer("views");
             $table->timestamps();
         });
     }

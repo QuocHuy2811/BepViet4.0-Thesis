@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('settings', function (Blueprint $table) {
-            $table->string("gmail");
-            $table->string("phone");
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->foreignId("category_id")->references("id")->on("categories");
         });
     }
 
@@ -22,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('settings', function (Blueprint $table) {
+        Schema::table('recipes', function (Blueprint $table) {
             //
         });
     }
